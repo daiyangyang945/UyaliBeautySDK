@@ -1,0 +1,780 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F37AE62A2984370600F3311C /* UyaliBeautySDK.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F3A2855B29840A7E00AD2D68 /* UyaliBeautySDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F37AE6792984FBE100F3311C /* FaceReshapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37AE6782984FBE100F3311C /* FaceReshapeView.swift */; };
+		F38408B2299E0B4600697547 /* BeautyFilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38408B1299E0B4600697547 /* BeautyFilterController.swift */; };
+		F38408B4299E0CE400697547 /* FaceBeautyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38408B3299E0CE400697547 /* FaceBeautyView.swift */; };
+		F3977B9529C746C7003053ED /* FaceMakeupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3977B9429C746C7003053ED /* FaceMakeupView.swift */; };
+		F3977B9729C77405003053ED /* DYYExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3977B9629C77405003053ED /* DYYExtension.swift */; };
+		F3977B9B29C8607A003053ED /* MakeupItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3977B9A29C8607A003053ED /* MakeupItems.swift */; };
+		F3A2852B298409AA00AD2D68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2852A298409AA00AD2D68 /* AppDelegate.swift */; };
+		F3A2852D298409AA00AD2D68 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2852C298409AA00AD2D68 /* SceneDelegate.swift */; };
+		F3A2852F298409AA00AD2D68 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2852E298409AA00AD2D68 /* ViewController.swift */; };
+		F3A28532298409AA00AD2D68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3A28530298409AA00AD2D68 /* Main.storyboard */; };
+		F3A28534298409AC00AD2D68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3A28533298409AC00AD2D68 /* Assets.xcassets */; };
+		F3A28537298409AC00AD2D68 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3A28535298409AC00AD2D68 /* LaunchScreen.storyboard */; };
+		F3A28542298409AC00AD2D68 /* UyaliBeautySDKDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A28541298409AC00AD2D68 /* UyaliBeautySDKDemoTests.swift */; };
+		F3A2854C298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2854B298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.swift */; };
+		F3A2854E298409AC00AD2D68 /* UyaliBeautySDKDemoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A2854D298409AC00AD2D68 /* UyaliBeautySDKDemoUITestsLaunchTests.swift */; };
+		F3A2856629840ACA00AD2D68 /* PFOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = F3A2856229840ACA00AD2D68 /* PFOpenGLView.m */; };
+		F3A2856729840ACA00AD2D68 /* PFCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = F3A2856429840ACA00AD2D68 /* PFCamera.m */; };
+		F3A285922984129C00AD2D68 /* UyaliBeautySDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A2855B29840A7E00AD2D68 /* UyaliBeautySDK.xcframework */; };
+		F3FAAF0429D1F40700E85353 /* BeautyImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF0329D1F40700E85353 /* BeautyImageController.swift */; };
+		F3FAAF0629D1F88300E85353 /* BaseTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF0529D1F88300E85353 /* BaseTools.swift */; };
+		F3FAAF0929D2026900E85353 /* DYYView.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF0829D2026800E85353 /* DYYView.m */; };
+		F3FAAF0E29D2060E00E85353 /* OpenGLPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF0D29D2060E00E85353 /* OpenGLPreviewView.swift */; };
+		F3FAAF1129D2061600E85353 /* PixelBufferTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF0F29D2061600E85353 /* PixelBufferTexture.swift */; };
+		F3FAAF1229D2061600E85353 /* RenderDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF1029D2061600E85353 /* RenderDestination.swift */; };
+		F3FAAF1429D2066C00E85353 /* ShaderProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF1329D2066C00E85353 /* ShaderProgram.swift */; };
+		F3FAAF1729D2083D00E85353 /* DirectPassVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = F3FAAF1529D2083D00E85353 /* DirectPassVertex.glsl */; };
+		F3FAAF1829D2083D00E85353 /* DirectPassFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = F3FAAF1629D2083D00E85353 /* DirectPassFragment.glsl */; };
+		F3FAAF1B29D211C700E85353 /* ImageTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FAAF1A29D211C700E85353 /* ImageTools.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F3A2853E298409AC00AD2D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A2851F298409AA00AD2D68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A28526298409AA00AD2D68;
+			remoteInfo = UyaliBeautySDKDemo;
+		};
+		F3A28548298409AC00AD2D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3A2851F298409AA00AD2D68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A28526298409AA00AD2D68;
+			remoteInfo = UyaliBeautySDKDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F3A286CF298436D800AD2D68 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F37AE62A2984370600F3311C /* UyaliBeautySDK.xcframework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F37AE6782984FBE100F3311C /* FaceReshapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceReshapeView.swift; sourceTree = "<group>"; };
+		F38408B1299E0B4600697547 /* BeautyFilterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautyFilterController.swift; sourceTree = "<group>"; };
+		F38408B3299E0CE400697547 /* FaceBeautyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceBeautyView.swift; sourceTree = "<group>"; };
+		F3977B9429C746C7003053ED /* FaceMakeupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceMakeupView.swift; sourceTree = "<group>"; };
+		F3977B9629C77405003053ED /* DYYExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DYYExtension.swift; sourceTree = "<group>"; };
+		F3977B9A29C8607A003053ED /* MakeupItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeupItems.swift; sourceTree = "<group>"; };
+		F3A28527298409AA00AD2D68 /* UyaliBeautySDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UyaliBeautySDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A2852A298409AA00AD2D68 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F3A2852C298409AA00AD2D68 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F3A2852E298409AA00AD2D68 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F3A28531298409AA00AD2D68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F3A28533298409AC00AD2D68 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F3A28536298409AC00AD2D68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F3A28538298409AC00AD2D68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3A2853D298409AC00AD2D68 /* UyaliBeautySDKDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UyaliBeautySDKDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A28541298409AC00AD2D68 /* UyaliBeautySDKDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UyaliBeautySDKDemoTests.swift; sourceTree = "<group>"; };
+		F3A28547298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UyaliBeautySDKDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A2854B298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UyaliBeautySDKDemoUITests.swift; sourceTree = "<group>"; };
+		F3A2854D298409AC00AD2D68 /* UyaliBeautySDKDemoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UyaliBeautySDKDemoUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F3A2855B29840A7E00AD2D68 /* UyaliBeautySDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ../../UyaliBeautySDK.xcframework; sourceTree = "<group>"; };
+		F3A2855D29840AB500AD2D68 /* UyaliBeautySDKDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UyaliBeautySDKDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		F3A2856229840ACA00AD2D68 /* PFOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFOpenGLView.m; sourceTree = "<group>"; };
+		F3A2856329840ACA00AD2D68 /* PFCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFCamera.h; sourceTree = "<group>"; };
+		F3A2856429840ACA00AD2D68 /* PFCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFCamera.m; sourceTree = "<group>"; };
+		F3A2856529840ACA00AD2D68 /* PFOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFOpenGLView.h; sourceTree = "<group>"; };
+		F3FAAF0329D1F40700E85353 /* BeautyImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautyImageController.swift; sourceTree = "<group>"; };
+		F3FAAF0529D1F88300E85353 /* BaseTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTools.swift; sourceTree = "<group>"; };
+		F3FAAF0729D2026800E85353 /* DYYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DYYView.h; sourceTree = "<group>"; };
+		F3FAAF0829D2026800E85353 /* DYYView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DYYView.m; sourceTree = "<group>"; };
+		F3FAAF0D29D2060E00E85353 /* OpenGLPreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenGLPreviewView.swift; sourceTree = "<group>"; };
+		F3FAAF0F29D2061600E85353 /* PixelBufferTexture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBufferTexture.swift; sourceTree = "<group>"; };
+		F3FAAF1029D2061600E85353 /* RenderDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderDestination.swift; sourceTree = "<group>"; };
+		F3FAAF1329D2066C00E85353 /* ShaderProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderProgram.swift; sourceTree = "<group>"; };
+		F3FAAF1529D2083D00E85353 /* DirectPassVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DirectPassVertex.glsl; sourceTree = "<group>"; };
+		F3FAAF1629D2083D00E85353 /* DirectPassFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DirectPassFragment.glsl; sourceTree = "<group>"; };
+		F3FAAF1929D211C700E85353 /* ImageTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageTools.h; sourceTree = "<group>"; };
+		F3FAAF1A29D211C700E85353 /* ImageTools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageTools.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3A28524298409AA00AD2D68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A285922984129C00AD2D68 /* UyaliBeautySDK.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2853A298409AC00AD2D68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A28544298409AC00AD2D68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F3A2851E298409AA00AD2D68 = {
+			isa = PBXGroup;
+			children = (
+				F3A28529298409AA00AD2D68 /* UyaliBeautySDKDemo */,
+				F3A28540298409AC00AD2D68 /* UyaliBeautySDKDemoTests */,
+				F3A2854A298409AC00AD2D68 /* UyaliBeautySDKDemoUITests */,
+				F3A28528298409AA00AD2D68 /* Products */,
+				F3A2855A29840A7E00AD2D68 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F3A28528298409AA00AD2D68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3A28527298409AA00AD2D68 /* UyaliBeautySDKDemo.app */,
+				F3A2853D298409AC00AD2D68 /* UyaliBeautySDKDemoTests.xctest */,
+				F3A28547298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3A28529298409AA00AD2D68 /* UyaliBeautySDKDemo */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2852A298409AA00AD2D68 /* AppDelegate.swift */,
+				F3A2852C298409AA00AD2D68 /* SceneDelegate.swift */,
+				F3A2852E298409AA00AD2D68 /* ViewController.swift */,
+				F38408B1299E0B4600697547 /* BeautyFilterController.swift */,
+				F3FAAF0329D1F40700E85353 /* BeautyImageController.swift */,
+				F37AE6782984FBE100F3311C /* FaceReshapeView.swift */,
+				F38408B3299E0CE400697547 /* FaceBeautyView.swift */,
+				F3977B9429C746C7003053ED /* FaceMakeupView.swift */,
+				F3977B9A29C8607A003053ED /* MakeupItems.swift */,
+				F3977B9629C77405003053ED /* DYYExtension.swift */,
+				F3FAAF0529D1F88300E85353 /* BaseTools.swift */,
+				F3FAAF1929D211C700E85353 /* ImageTools.h */,
+				F3FAAF1A29D211C700E85353 /* ImageTools.m */,
+				F3FAAF0C29D205E000E85353 /* 展示 */,
+				F3A2856129840ACA00AD2D68 /* 相机 */,
+				F3A28530298409AA00AD2D68 /* Main.storyboard */,
+				F3A28533298409AC00AD2D68 /* Assets.xcassets */,
+				F3A28535298409AC00AD2D68 /* LaunchScreen.storyboard */,
+				F3A28538298409AC00AD2D68 /* Info.plist */,
+				F3A2855D29840AB500AD2D68 /* UyaliBeautySDKDemo-Bridging-Header.h */,
+			);
+			path = UyaliBeautySDKDemo;
+			sourceTree = "<group>";
+		};
+		F3A28540298409AC00AD2D68 /* UyaliBeautySDKDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				F3A28541298409AC00AD2D68 /* UyaliBeautySDKDemoTests.swift */,
+			);
+			path = UyaliBeautySDKDemoTests;
+			sourceTree = "<group>";
+		};
+		F3A2854A298409AC00AD2D68 /* UyaliBeautySDKDemoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2854B298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.swift */,
+				F3A2854D298409AC00AD2D68 /* UyaliBeautySDKDemoUITestsLaunchTests.swift */,
+			);
+			path = UyaliBeautySDKDemoUITests;
+			sourceTree = "<group>";
+		};
+		F3A2855A29840A7E00AD2D68 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F3A2855B29840A7E00AD2D68 /* UyaliBeautySDK.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F3A2856129840ACA00AD2D68 /* 相机 */ = {
+			isa = PBXGroup;
+			children = (
+				F3FAAF0729D2026800E85353 /* DYYView.h */,
+				F3FAAF0829D2026800E85353 /* DYYView.m */,
+				F3A2856529840ACA00AD2D68 /* PFOpenGLView.h */,
+				F3A2856229840ACA00AD2D68 /* PFOpenGLView.m */,
+				F3A2856329840ACA00AD2D68 /* PFCamera.h */,
+				F3A2856429840ACA00AD2D68 /* PFCamera.m */,
+			);
+			path = "相机";
+			sourceTree = "<group>";
+		};
+		F3FAAF0C29D205E000E85353 /* 展示 */ = {
+			isa = PBXGroup;
+			children = (
+				F3FAAF1329D2066C00E85353 /* ShaderProgram.swift */,
+				F3FAAF0F29D2061600E85353 /* PixelBufferTexture.swift */,
+				F3FAAF1029D2061600E85353 /* RenderDestination.swift */,
+				F3FAAF0D29D2060E00E85353 /* OpenGLPreviewView.swift */,
+				F3FAAF1629D2083D00E85353 /* DirectPassFragment.glsl */,
+				F3FAAF1529D2083D00E85353 /* DirectPassVertex.glsl */,
+			);
+			path = "展示";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F3A28526298409AA00AD2D68 /* UyaliBeautySDKDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A28551298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemo" */;
+			buildPhases = (
+				F3A28523298409AA00AD2D68 /* Sources */,
+				F3A28524298409AA00AD2D68 /* Frameworks */,
+				F3A28525298409AA00AD2D68 /* Resources */,
+				F3A286CF298436D800AD2D68 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UyaliBeautySDKDemo;
+			packageProductDependencies = (
+			);
+			productName = UyaliBeautySDKDemo;
+			productReference = F3A28527298409AA00AD2D68 /* UyaliBeautySDKDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3A2853C298409AC00AD2D68 /* UyaliBeautySDKDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A28554298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemoTests" */;
+			buildPhases = (
+				F3A28539298409AC00AD2D68 /* Sources */,
+				F3A2853A298409AC00AD2D68 /* Frameworks */,
+				F3A2853B298409AC00AD2D68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3A2853F298409AC00AD2D68 /* PBXTargetDependency */,
+			);
+			name = UyaliBeautySDKDemoTests;
+			productName = UyaliBeautySDKDemoTests;
+			productReference = F3A2853D298409AC00AD2D68 /* UyaliBeautySDKDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F3A28546298409AC00AD2D68 /* UyaliBeautySDKDemoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A28557298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemoUITests" */;
+			buildPhases = (
+				F3A28543298409AC00AD2D68 /* Sources */,
+				F3A28544298409AC00AD2D68 /* Frameworks */,
+				F3A28545298409AC00AD2D68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3A28549298409AC00AD2D68 /* PBXTargetDependency */,
+			);
+			name = UyaliBeautySDKDemoUITests;
+			productName = UyaliBeautySDKDemoUITests;
+			productReference = F3A28547298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3A2851F298409AA00AD2D68 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					F3A28526298409AA00AD2D68 = {
+						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1420;
+					};
+					F3A2853C298409AC00AD2D68 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = F3A28526298409AA00AD2D68;
+					};
+					F3A28546298409AC00AD2D68 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = F3A28526298409AA00AD2D68;
+					};
+				};
+			};
+			buildConfigurationList = F3A28522298409AA00AD2D68 /* Build configuration list for PBXProject "UyaliBeautySDKDemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3A2851E298409AA00AD2D68;
+			packageReferences = (
+			);
+			productRefGroup = F3A28528298409AA00AD2D68 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3A28526298409AA00AD2D68 /* UyaliBeautySDKDemo */,
+				F3A2853C298409AC00AD2D68 /* UyaliBeautySDKDemoTests */,
+				F3A28546298409AC00AD2D68 /* UyaliBeautySDKDemoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3A28525298409AA00AD2D68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A28537298409AC00AD2D68 /* LaunchScreen.storyboard in Resources */,
+				F3FAAF1729D2083D00E85353 /* DirectPassVertex.glsl in Resources */,
+				F3FAAF1829D2083D00E85353 /* DirectPassFragment.glsl in Resources */,
+				F3A28534298409AC00AD2D68 /* Assets.xcassets in Resources */,
+				F3A28532298409AA00AD2D68 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A2853B298409AC00AD2D68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A28545298409AC00AD2D68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3A28523298409AA00AD2D68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3FAAF0629D1F88300E85353 /* BaseTools.swift in Sources */,
+				F3A2852F298409AA00AD2D68 /* ViewController.swift in Sources */,
+				F37AE6792984FBE100F3311C /* FaceReshapeView.swift in Sources */,
+				F3FAAF1B29D211C700E85353 /* ImageTools.m in Sources */,
+				F3FAAF1129D2061600E85353 /* PixelBufferTexture.swift in Sources */,
+				F3FAAF0929D2026900E85353 /* DYYView.m in Sources */,
+				F3FAAF0E29D2060E00E85353 /* OpenGLPreviewView.swift in Sources */,
+				F3977B9529C746C7003053ED /* FaceMakeupView.swift in Sources */,
+				F38408B2299E0B4600697547 /* BeautyFilterController.swift in Sources */,
+				F3FAAF0429D1F40700E85353 /* BeautyImageController.swift in Sources */,
+				F3FAAF1429D2066C00E85353 /* ShaderProgram.swift in Sources */,
+				F38408B4299E0CE400697547 /* FaceBeautyView.swift in Sources */,
+				F3FAAF1229D2061600E85353 /* RenderDestination.swift in Sources */,
+				F3A2852B298409AA00AD2D68 /* AppDelegate.swift in Sources */,
+				F3A2852D298409AA00AD2D68 /* SceneDelegate.swift in Sources */,
+				F3A2856729840ACA00AD2D68 /* PFCamera.m in Sources */,
+				F3977B9729C77405003053ED /* DYYExtension.swift in Sources */,
+				F3A2856629840ACA00AD2D68 /* PFOpenGLView.m in Sources */,
+				F3977B9B29C8607A003053ED /* MakeupItems.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A28539298409AC00AD2D68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A28542298409AC00AD2D68 /* UyaliBeautySDKDemoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A28543298409AC00AD2D68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A2854E298409AC00AD2D68 /* UyaliBeautySDKDemoUITestsLaunchTests.swift in Sources */,
+				F3A2854C298409AC00AD2D68 /* UyaliBeautySDKDemoUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F3A2853F298409AC00AD2D68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A28526298409AA00AD2D68 /* UyaliBeautySDKDemo */;
+			targetProxy = F3A2853E298409AC00AD2D68 /* PBXContainerItemProxy */;
+		};
+		F3A28549298409AC00AD2D68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A28526298409AA00AD2D68 /* UyaliBeautySDKDemo */;
+			targetProxy = F3A28548298409AC00AD2D68 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F3A28530298409AA00AD2D68 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F3A28531298409AA00AD2D68 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F3A28535298409AC00AD2D68 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F3A28536298409AC00AD2D68 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F3A2854F298409AC00AD2D68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F3A28550298409AC00AD2D68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F3A28552298409AC00AD2D68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = 9DPXSRHZRR;
+				GENERATE_INFOPLIST_FILE = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"GLES_SILENCE_DEPRECATION=1",
+					"COREVIDEO_SILENCE_GL_DEPRECATION=1",
+				);
+				INFOPLIST_FILE = UyaliBeautySDKDemo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "有鸭梨美颜";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to preview beauty effects.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is used by the camera preview.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save processed images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo library access is required to select and save images.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACH_O_TYPE = mh_execute;
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = (
+					"$(inherited)",
+					"-Xcc",
+					"-DGLES_SILENCE_DEPRECATION",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wuyali.beauty;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "UyaliBeautySDKDemo/UyaliBeautySDKDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F3A28553298409AC00AD2D68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = 9DPXSRHZRR;
+				GENERATE_INFOPLIST_FILE = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"GLES_SILENCE_DEPRECATION=1",
+					"COREVIDEO_SILENCE_GL_DEPRECATION=1",
+				);
+				INFOPLIST_FILE = UyaliBeautySDKDemo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "有鸭梨美颜";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to preview beauty effects.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is used by the camera preview.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save processed images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo library access is required to select and save images.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACH_O_TYPE = mh_execute;
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = (
+					"$(inherited)",
+					"-Xcc",
+					"-DGLES_SILENCE_DEPRECATION",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wuyali.beauty;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "UyaliBeautySDKDemo/UyaliBeautySDKDemo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F3A28555298409AC00AD2D68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DWXQL5XJ47;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uyali.beautydebug.UyaliBeautySDKDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UyaliBeautySDKDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UyaliBeautySDKDemo";
+			};
+			name = Debug;
+		};
+		F3A28556298409AC00AD2D68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DWXQL5XJ47;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uyali.beautydebug.UyaliBeautySDKDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UyaliBeautySDKDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UyaliBeautySDKDemo";
+			};
+			name = Release;
+		};
+		F3A28558298409AC00AD2D68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DWXQL5XJ47;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uyali.beautydebug.UyaliBeautySDKDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = UyaliBeautySDKDemo;
+			};
+			name = Debug;
+		};
+		F3A28559298409AC00AD2D68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DWXQL5XJ47;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uyali.beautydebug.UyaliBeautySDKDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = UyaliBeautySDKDemo;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3A28522298409AA00AD2D68 /* Build configuration list for PBXProject "UyaliBeautySDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A2854F298409AC00AD2D68 /* Debug */,
+				F3A28550298409AC00AD2D68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A28551298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A28552298409AC00AD2D68 /* Debug */,
+				F3A28553298409AC00AD2D68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A28554298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A28555298409AC00AD2D68 /* Debug */,
+				F3A28556298409AC00AD2D68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A28557298409AC00AD2D68 /* Build configuration list for PBXNativeTarget "UyaliBeautySDKDemoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A28558298409AC00AD2D68 /* Debug */,
+				F3A28559298409AC00AD2D68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3A2851F298409AA00AD2D68 /* Project object */;
+}

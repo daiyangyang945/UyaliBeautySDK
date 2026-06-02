@@ -1,0 +1,10 @@
+framework module UyaliBeautySDK {
+  umbrella header "UyaliBeautySDK.h"
+  export *
+
+  module * { export * }
+}
+
+module UyaliBeautySDK.Swift {
+  header "UyaliBeautySDK-Swift.h"
+}
