@@ -18,13 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (atomic, copy)NSArray<NSValue *> *landmarks;
 @property (atomic, copy)NSArray<NSArray<NSValue *> *> *allLandmarks;
-@property (atomic, copy)NSArray<NSValue *> *youtuLandmarks;
 @property (nonatomic, copy, readonly)NSString *debugInfo;
 
 - (void)getFaceLandmarks:(CVPixelBufferRef)pixelBuffer;
 - (NSArray<NSValue *> *)getFaceLandmarksSynchronously:(CVPixelBufferRef)pixelBuffer;
 - (NSArray<NSArray<NSValue *> *> *)getFaceLandmarkSetsSynchronously:(CVPixelBufferRef)pixelBuffer;
-- (NSArray<NSValue *> *)getYoutuFaceLandmarksSynchronously:(CVPixelBufferRef)pixelBuffer;
 
 @end
 

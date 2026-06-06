@@ -18,3 +18,4 @@ FOUNDATION_EXPORT const unsigned char UyaliBeautySDKVersionString[];
 #import <UyaliBeautySDK/UyaliBeauty.h>
 #import <UyaliBeautySDK/FaceLandmarks.h>
 #import <UyaliBeautySDK/BodyPoseDetector.h>
+#import <UyaliBeautySDK/UYBCoreBridge.h>

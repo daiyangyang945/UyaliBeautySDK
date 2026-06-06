@@ -701,9 +701,18 @@ SWIFT_CLASS("_TtC14UyaliBeautySDK17UyaliBeautyEngine")
 /// 最近一次检测到的人脸关键点。
 /// Face landmark points from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSValue *> * _Nonnull latestFaceLandmarkPoints;
+/// 最近一次检测到的全部人脸关键点，按人脸顺序扁平输出。
+/// All face landmark points from the latest detection, flattened by face order.
+@property (nonatomic, readonly, copy) NSArray<NSValue *> * _Nonnull latestAllFaceLandmarkPoints;
 /// 最近一次检测到的人脸关键点标签。
 /// Face landmark labels from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestFaceLandmarkLabels;
+/// 最近一次检测到的全部人脸关键点标签，按人脸顺序扁平输出。
+/// All face landmark labels from the latest detection, flattened by face order.
+@property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestAllFaceLandmarkLabels;
+/// 最近一次检测到的人脸数量。
+/// Number of face landmark sets from the latest detection.
+@property (nonatomic, readonly) NSInteger latestFaceLandmarkSetCount;
 /// 最近一次检测到的人脸轮廓标签。
 /// Face contour labels from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestFaceContourLabels;
@@ -1694,9 +1703,18 @@ SWIFT_CLASS("_TtC14UyaliBeautySDK17UyaliBeautyEngine")
 /// 最近一次检测到的人脸关键点。
 /// Face landmark points from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSValue *> * _Nonnull latestFaceLandmarkPoints;
+/// 最近一次检测到的全部人脸关键点，按人脸顺序扁平输出。
+/// All face landmark points from the latest detection, flattened by face order.
+@property (nonatomic, readonly, copy) NSArray<NSValue *> * _Nonnull latestAllFaceLandmarkPoints;
 /// 最近一次检测到的人脸关键点标签。
 /// Face landmark labels from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestFaceLandmarkLabels;
+/// 最近一次检测到的全部人脸关键点标签，按人脸顺序扁平输出。
+/// All face landmark labels from the latest detection, flattened by face order.
+@property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestAllFaceLandmarkLabels;
+/// 最近一次检测到的人脸数量。
+/// Number of face landmark sets from the latest detection.
+@property (nonatomic, readonly) NSInteger latestFaceLandmarkSetCount;
 /// 最近一次检测到的人脸轮廓标签。
 /// Face contour labels from the latest detection.
 @property (nonatomic, readonly, copy) NSArray<NSNumber *> * _Nonnull latestFaceContourLabels;

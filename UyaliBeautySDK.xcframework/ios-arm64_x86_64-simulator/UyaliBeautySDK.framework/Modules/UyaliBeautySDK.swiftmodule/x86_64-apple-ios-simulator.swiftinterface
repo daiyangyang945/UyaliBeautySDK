@@ -50,7 +50,16 @@ import simd
   @objc public var latestFaceLandmarkPoints: [Foundation.NSValue] {
     @objc get
   }
+  @objc public var latestAllFaceLandmarkPoints: [Foundation.NSValue] {
+    @objc get
+  }
   @objc public var latestFaceLandmarkLabels: [Foundation.NSNumber] {
+    @objc get
+  }
+  @objc public var latestAllFaceLandmarkLabels: [Foundation.NSNumber] {
+    @objc get
+  }
+  @objc public var latestFaceLandmarkSetCount: Swift.Int {
     @objc get
   }
   @objc public var latestFaceContourLabels: [Foundation.NSNumber] {

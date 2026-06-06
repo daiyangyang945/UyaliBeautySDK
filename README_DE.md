@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | **Deutsch** | [한국어](README_KO.md)
 
-UyaliBeautySDK ist ein Mobile Beauty SDK für Echtzeit-Kameraframes und Bildverarbeitung. Es bietet Beauty-Filter, Face Reshape, Body Reshape und Make-up-Effekte. Das aktuell verfügbare Paket unterstützt iOS.
+UyaliBeautySDK ist ein Mobile Beauty SDK für Echtzeit-Kameraframes und Bildverarbeitung. Es bietet Beauty-Filter, Face Reshape, Body Reshape und Make-up-Effekte. Das aktuell verfügbare Paket unterstützt iOS und Android.
 
 Wenn dir dieses Projekt hilft, freuen wir uns über einen star.
 
@@ -45,8 +45,9 @@ Make-up-Effekte nutzen einen Workflow aus Stil und Intensität:
 
 ### Rendering-Workflow
 
-- Direkte Verarbeitung von `CVPixelBuffer` aus Kameraframes.
-- Unterstützung für In-Place-Rendering und Ausgabe-Buffer.
+- iOS verarbeitet `CVPixelBuffer` aus Kameraframes direkt.
+- Android verarbeitet Kamera-/Videotexturen über einen OpenGL ES texture processor; CPU-Frameverarbeitung bleibt als Fallback erhalten.
+- Das SDK verarbeitet nur Frames oder Texturen. Vorschau und finale Anzeige bleiben in der Host-App.
 - Geeignet für Kameravorschau, Kurzvideoaufnahme und Fotoretusche.
 
 ### Mehrere Gesichter
@@ -73,133 +74,66 @@ Die Demo-Materialien stammen aus dem Internet. Bei Urheberrechtsfragen wenden Si
 | :--: | :--: |
 | ![makeup_eyebrow](gif/makeup_eyebrow.gif) | ![makeup_rouge](gif/makeup_rouge.gif) |
 
-## iOS Installation
+## iOS
 
-### Swift Package Manager
+### Integration
 
-Wähle in Xcode `File > Add Package Dependencies...` und gib Folgendes ein:
+Swift Package Manager:
 
 ```text
 https://github.com/daiyangyang945/UyaliBeautySDK.git
 ```
 
-SDK importieren:
-
 ```swift
 import UyaliBeautySDK
 ```
 
-### CocoaPods
+CocoaPods:
 
 ```ruby
 pod 'UyaliBeautySDK', :git => 'https://github.com/daiyangyang945/UyaliBeautySDK.git'
 ```
 
-### Manuelle Integration
+Manuelle Integration: Ziehe `UyaliBeautySDK.xcframework` in dein iOS-Projekt und setze es auf `Embed & Sign`.
 
-Ziehe `UyaliBeautySDK.xcframework` in dein iOS-Projekt und setze es auf `Embed & Sign`.
+### Demo-Code
 
-## Schnellstart
-
-Erstelle eine `UyaliBeautyEngine`-Instanz und verwende sie in deiner Kamera- oder Bildpipeline wieder:
+Erstelle eine `UyaliBeautyEngine`-Instanz und verwende sie für Kamera- oder Bildverarbeitung wieder:
 
 ```swift
 import UyaliBeautySDK
 
 let beauty = UyaliBeautyEngine()
 
-// Skin beauty
 beauty.white_delta = 40
 beauty.skin_delta = 40
-beauty.darkCircle_delta = 35
-
-// Face reshape
 beauty.faceThin_delta = 30
 beauty.eyeBig_delta = 20
-beauty.noseThin_delta = 15
-
-// Body reshape
 beauty.bodySlim_delta = 25
-beauty.legLong_delta = 15
-
-// Makeup
-beauty.makeup_eyebrow_delta = 80
-beauty.makeup_eyebrow_type = .eyebrow_cupin
 beauty.makeup_rouge_delta = 60
 beauty.makeup_rouge_type = .rouge_shaonvfen
 ```
 
-Für Echtzeit-Kameraframes konfigurierst du den Kamera-Output als 32-bit pixel buffer und verarbeitest jeden Frame im Capture-Callback:
+Für Echtzeit-Kameraframes verarbeitest du den `CVPixelBuffer` direkt im Capture-Callback:
 
 ```swift
-import AVFoundation
-import UyaliBeautySDK
-
-final class BeautyFrameProcessor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-    private let beauty = UyaliBeautyEngine()
-
-    override init() {
-        super.init()
-        beauty.white_delta = 40
-        beauty.skin_delta = 40
-        beauty.faceThin_delta = 30
-        beauty.bodySlim_delta = 25
-    }
-
-    func configure(_ videoOutput: AVCaptureVideoDataOutput) {
-        videoOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
-        ]
-        videoOutput.alwaysDiscardsLateVideoFrames = true
-    }
-
-    func captureOutput(_ output: AVCaptureOutput,
-                       didOutput sampleBuffer: CMSampleBuffer,
-                       from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-
-        // In-place processing. Render the same pixelBuffer in your preview view.
-        beauty.process(pixelBuffer: pixelBuffer)
-
-        // previewView.display(pixelBuffer)
-    }
+func captureOutput(_ output: AVCaptureOutput,
+                   didOutput sampleBuffer: CMSampleBuffer,
+                   from connection: AVCaptureConnection) {
+    guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+    beauty.process(pixelBuffer: pixelBuffer)
 }
 ```
 
-Für Bild-Workflows oder Pipelines, die einen separaten Ausgabe-Buffer benötigen:
+Für Bild-Workflows oder Pipelines, die einen separaten Output-Buffer benötigen:
 
 ```swift
 let processedPixelBuffer = beauty.processWithOutput(pixelBuffer: inputPixelBuffer)
 ```
 
-Für die kleinste Integration ist der zentrale Aufruf:
+### Runtime-Einbettung
 
-```swift
-beauty.process(pixelBuffer: pixelBuffer)
-```
-
-Make-up-Effekte benötigen normalerweise Intensität und Stil:
-
-```swift
-beauty.makeup_eyebrow_delta = 80
-beauty.makeup_eyebrow_type = .eyebrow_cupin
-```
-
-Die meisten Intensitätswerte in der Demo liegen im Bereich `0...100`. Einige Reshape-Offsets, zum Beispiel Kinn, Augenabstand und Mundform, verwenden den Bereich `-50...50`.
-
-## Demo
-
-Das Demo-Projekt befindet sich hier:
-
-```text
-iOS_demo/UyaliBeautySDKDemo
-```
-
-Die Demo enthält Steuerelemente für Beauty, Face Reshape, Body Reshape und Make-up.
-
-## Runtime Embedding
-
-Falls eine Laufzeitfehlermeldung wie diese erscheint:
+Wenn zur Laufzeit ein Fehler wie dieser erscheint:
 
 ```text
 Library not loaded: @rpath/UyaliBeautySDK.framework/UyaliBeautySDK
@@ -209,19 +143,151 @@ stelle sicher, dass `UyaliBeautySDK.xcframework` unter `Frameworks, Libraries, a
 
 ![ios_bug](screenshot/ios_bug.png)
 
-## Performance Preview
-
-iPhone 7 Test mit aktiviertem Beauty Rendering:
-
-| Metrik | Vorschau |
-| :--: | :--: |
-| CPU | ![cpu](screenshot/cpu.png) |
-| Speicher | ![memory](screenshot/memory.png) |
-| Energie | ![energy](screenshot/energy.png) |
-| GPU | ![gpu](screenshot/gpu.png) |
-
-## Aktuelle iOS Anforderungen
+### Anforderungen
 
 - iOS 12.0+
 - Xcode 15+
 - Swift 5+
+
+### Leistungsvorschau
+
+iPhone-7-Test mit aktiviertem Beauty-Rendering:
+
+| Metric | Preview |
+| :--: | :--: |
+| CPU | ![cpu](screenshot/cpu.png) |
+| Memory | ![memory](screenshot/memory.png) |
+| Energy | ![energy](screenshot/energy.png) |
+| GPU | ![gpu](screenshot/gpu.png) |
+
+## Android
+
+### Integration
+
+Gradle-Maven-Repository:
+
+```gradle
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://raw.githubusercontent.com/daiyangyang945/UyaliBeautySDK/main/android_maven")
+        }
+    }
+}
+```
+
+```gradle
+dependencies {
+    implementation "com.uyali.beauty:uyali-beauty-sdk:1.0.0"
+}
+```
+
+Bei einem lokalen Checkout kannst du das Maven-Repository stattdessen auf den lokalen Ordner verweisen lassen:
+
+```gradle
+maven { url = uri("path/to/UyaliBeautySDK/android_maven") }
+```
+
+Lokale AAR-Datei:
+
+```text
+android_demo/libs/uyali-beauty-sdk-release.aar
+```
+
+```gradle
+dependencies {
+    implementation files("libs/uyali-beauty-sdk-release.aar")
+}
+```
+
+Kamera-Apps benötigen außerdem:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+```
+
+### Demo-Code
+
+Der empfohlene Android-Kamerapfad ist GPU-Texturverarbeitung. Die Host-App übergibt die Kamera- oder Videotextur, und das SDK gibt eine verarbeitete Textur zurück. Das Demo enthält die vollständige Camera2-, `SurfaceTexture`- und Renderer-Verkabelung.
+
+Minimaler Texture-Einstieg:
+
+```java
+UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
+
+UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
+int outputTextureId = frame.textureId();
+```
+
+Wenn dein Renderer Transform, Quellgröße, Ausgabegröße, Zeitstempel und Kamerarichtung bereits kennt, kannst du sie explizit übergeben:
+
+```java
+UyaliBeautyTextureFrame frame = beauty.process(
+        UyaliBeautyTextureInput.externalOes(
+                oesTextureId,
+                transform,
+                outputWidth,
+                outputHeight,
+                sourceWidth,
+                sourceHeight,
+                frontCamera,
+                timestampNs,
+                true));
+int outputTextureId = frame.textureId();
+```
+
+Zeichne `outputTextureId` mit deinem eigenen Renderer oder sende es an deine Encoder-Surface.
+
+### Parametersteuerung
+
+Die meisten Intensitäten verwenden `0...100`. Einige Reshape-Offsets wie Kinn, Augenabstand und Mundform verwenden `-50...50`.
+
+```java
+UyaliBeautyEngine engine = beauty.engine();
+
+engine.setWhiteDelta(40f);
+engine.setSkinDelta(35f);
+engine.setEyeBrightDelta(20f);
+engine.setTeethBrightDelta(20f);
+
+engine.setFaceThinDelta(30f);
+engine.setEyeBigDelta(20f);
+engine.setNoseThinDelta(15f);
+
+engine.setBodySlimDelta(25f);
+engine.setLegLongDelta(15f);
+
+engine.setMakeupRougeDelta(60f);
+engine.setMakeupRougeType(UyaliMakeupCatalog.ROUGE_TYPES[0]);
+```
+
+### CPU-Frame-Fallback
+
+Verwende den CPU-Frame-Prozessor für Geräte oder Pipelines, in denen Texturverarbeitung nicht verfügbar ist:
+
+```java
+UyaliBeautyFrameProcessor processor = new UyaliBeautyFrameProcessor(context);
+processor.engine().setWhiteDelta(40f);
+processor.engine().setSkinDelta(35f);
+
+UyaliBeautyFrame frame = processor.process(image, rotationDegrees);
+ByteBuffer rgba = frame.rgba();
+```
+
+### Anforderungen
+
+- Android minSdk 26+
+- Android Gradle Plugin 8+
+- OpenGL-ES-fähige Rendering-Pipeline
+
+## Demo-Projekte
+
+```text
+iOS_demo/UyaliBeautySDKDemo
+android_demo
+```
+
+Die Demos enthalten Controls für Beauty, Face Reshape, Body Reshape und Make-up.

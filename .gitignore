@@ -7,3 +7,9 @@ build/
 *.dSYM
 *.xcarchive
 .swiftpm/
+android_demo/.gradle/
+android_demo/.idea/
+android_demo/local.properties
+android_demo/app/build/
+android_demo/app/src/androidTest/
+android_demo/build/
