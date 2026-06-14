@@ -35,9 +35,12 @@ final class Camera2Controller {
         void onAnalysisImage(Image image, int rotationDegrees);
     }
 
-    private static final long ANALYSIS_INTERVAL_NS = 12_000_000L;
-    // The YUV stream is analysis-only; preview/effects render from the camera OES texture.
-    private static final int ANALYSIS_MAX_EDGE = 640;
+    private static final long ANALYSIS_INTERVAL_NS = 24_000_000L;
+    private static final int IMAGE_READER_QUEUE_SIZE = 3;
+    private static final int ANALYSIS_MIN_SHORT_EDGE = 720;
+    private static final int ANALYSIS_TARGET_LONG_EDGE = 1280;
+    private static final int PREVIEW_MIN_SHORT_EDGE = 720;
+    private static final int PREVIEW_TARGET_LONG_EDGE = 1280;
 
     private final Context context;
     private final Listener listener;
@@ -200,7 +203,7 @@ final class Camera2Controller {
         cameraThread = new HandlerThread("UyaliBeautyCamera", Process.THREAD_PRIORITY_DISPLAY);
         cameraThread.start();
         cameraHandler = new Handler(cameraThread.getLooper());
-        analysisThread = new HandlerThread("UyaliBeautyAnalysis", Process.THREAD_PRIORITY_DISPLAY);
+        analysisThread = new HandlerThread("UyaliBeautyAnalysis", Process.THREAD_PRIORITY_FOREGROUND);
         analysisThread.start();
         analysisHandler = new Handler(analysisThread.getLooper());
     }
@@ -233,7 +236,7 @@ final class Camera2Controller {
                         analysisSize.getWidth(),
                         analysisSize.getHeight(),
                         ImageFormat.YUV_420_888,
-                        2);
+                        IMAGE_READER_QUEUE_SIZE);
                 analysisReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                     @Override
                     public void onImageAvailable(ImageReader reader) {
@@ -361,38 +364,38 @@ final class Camera2Controller {
         StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         Size[] sizes = map == null ? null : map.getOutputSizes(ImageFormat.YUV_420_888);
         if (sizes == null || sizes.length == 0) {
-            return new Size(640, 480);
+            return new Size(1280, 720);
         }
-        Size bestUnderMax = null;
-        double bestUnderMaxScore = Double.MAX_VALUE;
-        Size bestOverMax = null;
-        double bestOverMaxScore = Double.MAX_VALUE;
+        Size best720pOrBetter = null;
+        double best720pScore = Double.MAX_VALUE;
+        Size largestFallback = null;
         double targetAspect = targetPreviewSize == null || targetPreviewSize.getHeight() <= 0
-                ? 4.0 / 3.0
+                ? 16.0 / 9.0
                 : (double) targetPreviewSize.getWidth() / (double) targetPreviewSize.getHeight();
         for (Size size : sizes) {
+            if (largestFallback == null || pixels(size) > pixels(largestFallback)) {
+                largestFallback = size;
+            }
+            int shortEdge = Math.min(size.getWidth(), size.getHeight());
             int longEdge = Math.max(size.getWidth(), size.getHeight());
             double aspect = size.getHeight() <= 0 ? targetAspect : (double) size.getWidth() / (double) size.getHeight();
-            double aspectPenalty = Math.abs(aspect - targetAspect) * 10.0;
-            if (longEdge <= ANALYSIS_MAX_EDGE) {
-                double score = aspectPenalty + (ANALYSIS_MAX_EDGE - longEdge) / (double) ANALYSIS_MAX_EDGE * 0.20;
-                if (bestUnderMax == null ||
-                        score < bestUnderMaxScore ||
-                        (Math.abs(score - bestUnderMaxScore) < 0.0001 && pixels(size) > pixels(bestUnderMax))) {
-                    bestUnderMax = size;
-                    bestUnderMaxScore = score;
-                }
-            } else {
-                double score = aspectPenalty + 4.0 + (longEdge - ANALYSIS_MAX_EDGE) / (double) ANALYSIS_MAX_EDGE;
-                if (bestOverMax == null ||
-                        score < bestOverMaxScore ||
-                        (Math.abs(score - bestOverMaxScore) < 0.0001 && pixels(size) < pixels(bestOverMax))) {
-                    bestOverMax = size;
-                    bestOverMaxScore = score;
-                }
+            if (shortEdge < ANALYSIS_MIN_SHORT_EDGE) {
+                continue;
+            }
+            double aspectPenalty = Math.abs(aspect - targetAspect) * 100.0;
+            double longEdgePenalty = Math.abs(longEdge - ANALYSIS_TARGET_LONG_EDGE) / (double) ANALYSIS_TARGET_LONG_EDGE;
+            double oversizePenalty = longEdge > ANALYSIS_TARGET_LONG_EDGE
+                    ? (longEdge - ANALYSIS_TARGET_LONG_EDGE) / 256.0
+                    : 0.0;
+            double score = aspectPenalty + longEdgePenalty + oversizePenalty;
+            if (best720pOrBetter == null ||
+                    score < best720pScore ||
+                    (Math.abs(score - best720pScore) < 0.0001 && pixels(size) < pixels(best720pOrBetter))) {
+                best720pOrBetter = size;
+                best720pScore = score;
             }
         }
-        return bestUnderMax != null ? bestUnderMax : bestOverMax;
+        return best720pOrBetter != null ? best720pOrBetter : largestFallback;
     }
 
     private Size choosePreviewSize(CameraCharacteristics characteristics) {
@@ -401,19 +404,33 @@ final class Camera2Controller {
         if (sizes == null || sizes.length == 0) {
             return new Size(1280, 720);
         }
-        Size bestUnderMax = null;
-        Size smallestOverMax = null;
+        Size best720pOrBetter = null;
+        double best720pScore = Double.MAX_VALUE;
+        Size largestFallback = null;
         for (Size size : sizes) {
+            int shortEdge = Math.min(size.getWidth(), size.getHeight());
             int longEdge = Math.max(size.getWidth(), size.getHeight());
-            if (longEdge <= 1280) {
-                if (bestUnderMax == null || pixels(size) > pixels(bestUnderMax)) {
-                    bestUnderMax = size;
-                }
-            } else if (smallestOverMax == null || pixels(size) < pixels(smallestOverMax)) {
-                smallestOverMax = size;
+            if (largestFallback == null || pixels(size) > pixels(largestFallback)) {
+                largestFallback = size;
+            }
+            if (shortEdge < PREVIEW_MIN_SHORT_EDGE) {
+                continue;
+            }
+            double aspect = shortEdge <= 0 ? 16.0 / 9.0 : (double) longEdge / (double) shortEdge;
+            double aspectPenalty = Math.abs(aspect - 16.0 / 9.0) * 100.0;
+            double longEdgePenalty = Math.abs(longEdge - PREVIEW_TARGET_LONG_EDGE) / (double) PREVIEW_TARGET_LONG_EDGE;
+            double oversizePenalty = longEdge > PREVIEW_TARGET_LONG_EDGE
+                    ? (longEdge - PREVIEW_TARGET_LONG_EDGE) / 256.0
+                    : 0.0;
+            double score = aspectPenalty + longEdgePenalty + oversizePenalty;
+            if (best720pOrBetter == null ||
+                    score < best720pScore ||
+                    (Math.abs(score - best720pScore) < 0.0001 && pixels(size) > pixels(best720pOrBetter))) {
+                best720pOrBetter = size;
+                best720pScore = score;
             }
         }
-        return bestUnderMax != null ? bestUnderMax : smallestOverMax;
+        return best720pOrBetter != null ? best720pOrBetter : largestFallback;
     }
 
     private long pixels(Size size) {

@@ -1,0 +1,11 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Demo for the Uyali Beauty HarmonyOS SDK.",
+  "main": "",
+  "dependencies": {
+    "uyali_beauty_sdk": "file:../../harmony_sdk/uyali_beauty_sdk.har"
+  },
+  "devDependencies": {
+  }
+}

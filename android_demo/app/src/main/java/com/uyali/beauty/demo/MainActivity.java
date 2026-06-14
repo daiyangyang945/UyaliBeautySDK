@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.uyali.beauty.UyaliBeautyDebugInfo;
 import com.uyali.beauty.UyaliBeautyEngine;
-import com.uyali.beauty.UyaliBeautyFrameProcessor;
 import com.uyali.beauty.UyaliBeautyParameters;
 import com.uyali.beauty.UyaliBeautyPoint;
 import com.uyali.beauty.UyaliBeautyView;
@@ -45,10 +44,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class MainActivity extends Activity implements Camera2Controller.Listener {
     private static final int CAMERA_PERMISSION_REQUEST = 1001;
@@ -60,8 +57,11 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
     private static final int CATEGORY_BODY = 2;
     private static final int CATEGORY_MAKEUP = 3;
     private static final long SYNC_FRAME_NO_STALENESS_LIMIT_NS = Long.MAX_VALUE;
+    private static final long SYNC_FRAME_FACE_MAKEUP_STALENESS_NS = 96_000_000L;
     private static final long SYNC_FRAME_BODY_COMBO_STALENESS_NS = 180_000_000L;
     private static final long SYNC_FRAME_FACE_REGION_COMBO_STALENESS_NS = 240_000_000L;
+    private static final long LANDMARK_REFRESH_INTERVAL_MS = 16L;
+    private static final long DEBUG_TEXT_REFRESH_INTERVAL_MS = 250L;
     private static final int PANEL_HEIGHT_DP = 130;
     private static final String[] CATEGORY_TITLES = {"美颜", "美型", "美体", "美妆"};
 
@@ -184,11 +184,6 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         IMAGE
     }
 
-    private enum CameraProcessingBackend {
-        GPU,
-        CPU
-    }
-
     private FrameLayout root;
     private UyaliBeautyView beautyView;
     private Camera2Controller cameraController;
@@ -206,19 +201,22 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
     private int previewSourceHeight;
     private boolean previewMirrored;
     private boolean previewFitCenter;
-    private CameraProcessingBackend cameraProcessingBackend = CameraProcessingBackend.GPU;
-    private Button gpuBackendButton;
-    private Button cpuBackendButton;
-    private ByteBuffer cpuCameraOutputRgba;
-    private final AtomicBoolean analysisBusy = new AtomicBoolean(false);
+    private long lastDebugTextUpdateMs;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Runnable debugTicker = new Runnable() {
         @Override
         public void run() {
-            updateDebugText();
+            long nowMs = System.currentTimeMillis();
+            if (lastDebugTextUpdateMs == 0L || nowMs - lastDebugTextUpdateMs >= DEBUG_TEXT_REFRESH_INTERVAL_MS) {
+                lastDebugTextUpdateMs = nowMs;
+                updateDebugText();
+            }
             updateLandmarkOverlay();
             if (screenMode != ScreenMode.HOME) {
-                mainHandler.postDelayed(this, screenMode == ScreenMode.CAMERA && landmarksVisible ? 33 : 500);
+                mainHandler.postDelayed(this,
+                        screenMode == ScreenMode.CAMERA && landmarksVisible
+                                ? LANDMARK_REFRESH_INTERVAL_MS
+                                : DEBUG_TEXT_REFRESH_INTERVAL_MS);
             }
         }
     };
@@ -355,7 +353,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
     public void onCameraFacingChanged(boolean front) {
         previewMirrored = false;
         if (beautyView != null) {
-            beautyView.engine().setInputMirrored(cameraProcessingBackend == CameraProcessingBackend.CPU && front);
+            beautyView.engine().setInputMirrored(false);
             beautyView.setOutputMirrored(false);
         }
         if (landmarkOverlay != null) {
@@ -372,6 +370,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         boolean rotated = normalizeDegrees(rotationDegrees) == 90 || normalizeDegrees(rotationDegrees) == 270;
         previewSourceWidth = rotated ? height : width;
         previewSourceHeight = rotated ? width : height;
+        previewFitCenter = false;
         if (landmarkOverlay != null) {
             landmarkOverlay.setPreviewGeometry(previewSourceWidth, previewSourceHeight, previewMirrored, previewFitCenter);
         }
@@ -379,55 +378,24 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
 
     @Override
     public boolean needsAnalysisStream() {
-        return screenMode == ScreenMode.CAMERA &&
-                cameraProcessingBackend == CameraProcessingBackend.CPU;
+        return false;
     }
 
     @Override
     public boolean canAcceptAnalysisFrame() {
-        return screenMode == ScreenMode.CAMERA &&
-                beautyView != null &&
-                cameraProcessingBackend == CameraProcessingBackend.CPU &&
-                !analysisBusy.get();
+        return false;
     }
 
     @Override
     public void onAnalysisImage(Image image, int rotationDegrees) {
-        if (!analysisBusy.compareAndSet(false, true)) {
+        UyaliBeautyView view = beautyView;
+        if (screenMode != ScreenMode.CAMERA || view == null || image == null || !shouldRunCameraAnalysis()) {
             return;
         }
-        try {
-            UyaliBeautyView view = beautyView;
-            if (screenMode == ScreenMode.CAMERA && view != null && image != null) {
-                if (cameraProcessingBackend == CameraProcessingBackend.CPU) {
-                    processCpuCameraFrame(view, image, rotationDegrees);
-                }
-            }
-        } finally {
-            analysisBusy.set(false);
-        }
-    }
-
-    private void processCpuCameraFrame(UyaliBeautyView view, Image image, int rotationDegrees) {
-        UyaliBeautyEngine engine = view.engine();
-        int outputWidth = UyaliBeautyFrameProcessor.outputWidth(image, rotationDegrees);
-        int outputHeight = UyaliBeautyFrameProcessor.outputHeight(image, rotationDegrees);
-        int requiredBytes = UyaliBeautyFrameProcessor.requiredRgbaBufferSize(image, rotationDegrees);
-        if (engine == null || outputWidth <= 0 || outputHeight <= 0 || requiredBytes <= 0) {
-            return;
-        }
-        if (cpuCameraOutputRgba == null || cpuCameraOutputRgba.capacity() < requiredBytes) {
-            cpuCameraOutputRgba = ByteBuffer.allocateDirect(requiredBytes);
-        }
-        cpuCameraOutputRgba.clear();
-        cpuCameraOutputRgba.limit(requiredBytes);
-        boolean ok = engine.process(image, rotationDegrees, cpuCameraOutputRgba);
-        if (!ok) {
-            return;
-        }
-        cpuCameraOutputRgba.position(0);
-        cpuCameraOutputRgba.limit(requiredBytes);
-        view.setProcessedRgbaFrame(cpuCameraOutputRgba, outputWidth, outputHeight, false);
+        boolean mirrored = cameraController != null && cameraController.isFrontCamera();
+        view.textureProcessor().setInputMirrored(mirrored);
+        view.textureProcessor().analyzeYuv420(image, rotationDegrees, landmarksVisible);
+        view.requestBeautyRender();
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -458,15 +426,16 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
             return;
         }
         UyaliBeautyParameters p = beautyView.engine().parameters();
-        boolean useSynchronizedCamera = cameraProcessingBackend == CameraProcessingBackend.GPU &&
-                shouldUseSynchronizedCameraProcessing(p);
-        beautyView.textureProcessor().setAutomaticTextureAnalysisEnabled(true);
+        beautyView.textureProcessor().setAutomaticTextureAnalysisEnabled(shouldRunCameraAnalysis());
+        beautyView.textureProcessor().setAutomaticTextureAnalysisDebugLandmarks(landmarksVisible);
+        beautyView.textureProcessor().setAutomaticTextureAnalysisMaxEdge(720);
+        beautyView.textureProcessor().setAutomaticTextureAnalysisIntervalNs(0L);
         beautyView.setSynchronizedCameraFrameMaxStalenessNs(synchronizedCameraFrameMaxStalenessNs(p));
-        beautyView.setSynchronizedCameraMode(useSynchronizedCamera);
-        if (cameraProcessingBackend == CameraProcessingBackend.GPU && !shouldRunCameraAnalysis()) {
-            beautyView.setOutputMirrored(false);
-            beautyView.clearImageBitmap();
-        }
+        beautyView.setSynchronizedCameraMode(false);
+        beautyView.setGpuTextureProcessing(true);
+        beautyView.setOutputMirrored(false);
+        beautyView.engine().setInputMirrored(false);
+        beautyView.clearImageBitmap();
     }
 
     private boolean shouldUseSynchronizedCameraProcessing() {
@@ -474,17 +443,19 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
             return false;
         }
         UyaliBeautyParameters p = beautyView.engine().parameters();
-        return cameraProcessingBackend == CameraProcessingBackend.GPU &&
-                shouldUseSynchronizedCameraProcessing(p);
+        return shouldUseSynchronizedCameraProcessing(p);
     }
 
     private boolean shouldUseSynchronizedCameraProcessing(UyaliBeautyParameters p) {
-        return hasActiveMakeup(p) || hasActiveFaceReshape(p);
+        return landmarksVisible || hasActiveFaceMesh(p) || hasActiveMakeup(p) || hasActiveBody(p);
     }
 
     private long synchronizedCameraFrameMaxStalenessNs(UyaliBeautyParameters p) {
         if (p == null) {
             return SYNC_FRAME_NO_STALENESS_LIMIT_NS;
+        }
+        if (landmarksVisible || hasActiveMakeup(p) || hasActiveFaceMesh(p)) {
+            return SYNC_FRAME_FACE_MAKEUP_STALENESS_NS;
         }
         if (hasActiveBody(p)) {
             return SYNC_FRAME_BODY_COMBO_STALENESS_NS;
@@ -567,6 +538,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         selectedCategory = CATEGORY_NONE;
         selectedMakeupGroup = CATEGORY_NONE;
         landmarksVisible = false;
+        lastDebugTextUpdateMs = 0L;
         mainHandler.removeCallbacks(debugTicker);
 
         root = new FrameLayout(this);
@@ -610,14 +582,13 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         selectedCategory = CATEGORY_NONE;
         selectedMakeupGroup = CATEGORY_NONE;
         landmarksVisible = false;
+        lastDebugTextUpdateMs = 0L;
         previewSourceWidth = 0;
         previewSourceHeight = 0;
         previewMirrored = false;
-        previewFitCenter = false;
-        cpuCameraOutputRgba = null;
-
+        previewFitCenter = true;
         beautyView = new UyaliBeautyView(this);
-        beautyView.setGpuTextureProcessing(cameraProcessingBackend == CameraProcessingBackend.GPU);
+        beautyView.setGpuTextureProcessing(true);
         cameraController = new Camera2Controller(this, this);
         beautyView.setCameraSurfaceListener(new UyaliBeautyView.CameraSurfaceListener() {
             @Override
@@ -664,6 +635,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         selectedCategory = CATEGORY_NONE;
         selectedMakeupGroup = CATEGORY_NONE;
         landmarksVisible = false;
+        lastDebugTextUpdateMs = 0L;
         sourceBitmap = bitmap.getConfig() == Bitmap.Config.ARGB_8888 ? bitmap : bitmap.copy(Bitmap.Config.ARGB_8888, false);
         previewSourceWidth = sourceBitmap.getWidth();
         previewSourceHeight = sourceBitmap.getHeight();
@@ -674,6 +646,17 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
         root.setBackgroundColor(Color.BLACK);
 
         beautyView = new UyaliBeautyView(this);
+        beautyView.setStillImageAnalysisListener(new UyaliBeautyView.StillImageAnalysisListener() {
+            @Override
+            public void onStillImageAnalysisComplete() {
+                if (screenMode != ScreenMode.IMAGE) {
+                    return;
+                }
+                updateLandmarkOverlay();
+                updateDebugText();
+                requestCurrentRender();
+            }
+        });
         root.addView(beautyView, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
@@ -720,6 +703,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
                 }
                 if (debugText != null) {
                     debugText.setVisibility(landmarksVisible ? View.VISIBLE : View.GONE);
+                    lastDebugTextUpdateMs = 0L;
                     updateDebugText();
                 }
                 updateCameraProcessingMode();
@@ -763,37 +747,6 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
                 Gravity.TOP);
         debugParams.topMargin = dp(84);
         root.addView(debugText, debugParams);
-    }
-
-    private void setCameraProcessingBackend(CameraProcessingBackend backend) {
-        if (backend == null) {
-            return;
-        }
-        cameraProcessingBackend = backend;
-        cpuCameraOutputRgba = null;
-        if (beautyView != null && screenMode == ScreenMode.CAMERA) {
-            beautyView.setGpuTextureProcessing(backend == CameraProcessingBackend.GPU);
-            beautyView.engine().setInputMirrored(backend == CameraProcessingBackend.CPU &&
-                    cameraController != null &&
-                    cameraController.isFrontCamera());
-            if (backend == CameraProcessingBackend.GPU) {
-                beautyView.clearImageBitmap();
-            }
-            updateCameraProcessingMode();
-            requestCurrentRender();
-        }
-        updateBackendButtons();
-    }
-
-    private void updateBackendButtons() {
-        if (gpuBackendButton == null || cpuBackendButton == null) {
-            return;
-        }
-        boolean gpu = cameraProcessingBackend == CameraProcessingBackend.GPU;
-        gpuBackendButton.setTextColor(gpu ? Color.BLACK : Color.DKGRAY);
-        cpuBackendButton.setTextColor(gpu ? Color.DKGRAY : Color.BLACK);
-        gpuBackendButton.setBackground(roundedBackground(gpu ? 0xFFFFD166 : 0xFFEDEDED, 0xFFB0B0B0, 1, 4));
-        cpuBackendButton.setBackground(roundedBackground(gpu ? 0xFFEDEDED : 0xFFFFD166, 0xFFB0B0B0, 1, 4));
     }
 
     private void addLandmarkOverlay() {
@@ -1456,9 +1409,7 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
                 " face=" + (p == null ? 0f : p.faceThin) +
                 " body=" + (p == null ? 0f : p.bodySlim) +
                 " lip=" + (p == null ? 0f : p.makeupRouge) +
-                " lipType=" + (p == null ? 0 : p.makeupRougeType) +
-                "\nlicense=" + engine.getLicenseStatus() +
-                " trial=" + engine.getLicenseTrialSecondsRemaining() + "s");
+                " lipType=" + (p == null ? 0 : p.makeupRougeType));
     }
 
     private void updateLandmarkOverlay() {
@@ -1572,7 +1523,6 @@ public final class MainActivity extends Activity implements Camera2Controller.Li
             cameraController.release();
             cameraController = null;
         }
-        analysisBusy.set(false);
         if (beautyView != null) {
             beautyView.onPause();
             beautyView.release();

@@ -1,8 +1,8 @@
 // swift-tools-version: 5.9
 import PackageDescription
 
-// Binary-only distribution. The public package does not include SDK source code.
-// 二进制分发包。公开仓库不包含 SDK 源码。
+// Binary package distribution.
+// 二进制分发包。
 let package = Package(
     name: "UyaliBeautySDK",
     platforms: [

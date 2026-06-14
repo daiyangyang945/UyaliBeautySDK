@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Uyali Beauty demo"
+    },
+    {
+      "name": "entry_desc",
+      "value": "Uyali Beauty demo ability"
+    },
+    {
+      "name": "entry_label",
+      "value": "Uyali Beauty"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "相机美颜需要访问摄像头以获取待处理帧"
+    }
+  ]
+}

@@ -13,3 +13,12 @@ android_demo/local.properties
 android_demo/app/build/
 android_demo/app/src/androidTest/
 android_demo/build/
+harmony_demo/.hvigor/
+harmony_demo/.cxx/
+harmony_demo/build/
+harmony_demo/oh_modules/
+harmony_demo/oh-package-lock.json5
+harmony_demo/entry/.cxx/
+harmony_demo/entry/build/
+harmony_demo/entry/oh_modules/
+harmony_demo/entry/oh-package-lock.json5

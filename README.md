@@ -2,7 +2,7 @@
 
 **English** | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
-UyaliBeautySDK is a mobile beauty SDK for real-time camera frames and image processing. It provides beauty filters, face reshape, body reshape and makeup effects. The current package supports iOS and Android.
+UyaliBeautySDK is a mobile beauty SDK for real-time camera frames and image processing. It provides beauty filters, face reshape, body reshape and makeup effects. The current package supports iOS, Android and HarmonyOS.
 
 If this project helps you, a star would be appreciated.
 
@@ -218,14 +218,14 @@ Minimal texture entry:
 ```java
 UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
 
-UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
-int outputTextureId = frame.textureId();
+beauty.process(oesTextureId);
+int outputTextureId = beauty.outputTextureId();
 ```
 
 If your renderer already tracks the transform, source size, output size, timestamp and camera direction, pass them explicitly:
 
 ```java
-UyaliBeautyTextureFrame frame = beauty.process(
+beauty.process(
         UyaliBeautyTextureInput.externalOes(
                 oesTextureId,
                 transform,
@@ -236,10 +236,16 @@ UyaliBeautyTextureFrame frame = beauty.process(
                 frontCamera,
                 timestampNs,
                 true));
-int outputTextureId = frame.textureId();
+int outputTextureId = beauty.outputTextureId();
 ```
 
-Draw `outputTextureId` with your own renderer or send it to your encoder surface.
+Draw `outputTextureId` with your own renderer or send it to your encoder surface. For preview-only hosts, the SDK can also draw directly into the currently bound framebuffer:
+
+```java
+beauty.processToCurrentFramebuffer(oesTextureId);
+```
+
+`processToCurrentFramebuffer(...)` uses the same texture frame processor, but it does not produce `outputTextureId`; use `process(...)` when you need to preview later, encode, stream, or compose the processed texture.
 
 ### Parameter Control
 
@@ -283,11 +289,58 @@ ByteBuffer rgba = frame.rgba();
 - Android Gradle Plugin 8+
 - OpenGL ES-capable rendering pipeline
 
+## HarmonyOS
+
+### Integration
+
+Local HAR package:
+
+```json5
+{
+  "dependencies": {
+    "uyali_beauty_sdk": "file:../../harmony_sdk/uyali_beauty_sdk.har"
+  }
+}
+```
+
+Registry package:
+
+```json5
+{
+  "dependencies": {
+    "uyali_beauty_sdk": "1.0.0"
+  }
+}
+```
+
+Enable normalized OHM URLs in the project-level `build-profile.json5` product build options, then run `ohpm install`.
+
+### Demo Code
+
+```ts
+import { UyaliBeautyEngine } from 'uyali_beauty_sdk';
+
+const beauty = new UyaliBeautyEngine(context);
+beauty.setParameter('white', 40);
+beauty.setParameter('skin', 35);
+beauty.setParameter('faceThin', 30);
+
+await beauty.processPixelMapInPlace(pixelMap);
+```
+
+See `harmony_sdk/README.md` and `harmony_demo/README.md` for local HAR and registry import examples.
+
+### Environment Requirements
+
+- HarmonyOS 5.0+
+- DevEco Studio or HarmonyOS command-line tools compatible with compileSdkVersion `6.0.2(22)`
+
 ## Demo Projects
 
 ```text
 iOS_demo/UyaliBeautySDKDemo
 android_demo
+harmony_demo
 ```
 
 The demos include beauty, face reshape, body reshape and makeup controls.

@@ -2,6 +2,7 @@ package com.uyali.beauty;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -23,6 +24,10 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     public interface CameraSurfaceListener {
         void onCameraSurfaceCreated(Surface surface, SurfaceTexture surfaceTexture);
         void onCameraSurfaceDestroyed();
+    }
+
+    public interface StillImageAnalysisListener {
+        void onStillImageAnalysisComplete();
     }
 
     private static final long IMAGE_REFRESH_INTERVAL_MS = 33L;
@@ -65,6 +70,36 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
             "void main() {\n" +
             "    gl_FragColor = texture2D(uTexture, vTexCoord);\n" +
             "}\n";
+    private static final String YUV_TO_RGB_FRAGMENT_SHADER =
+            "precision mediump float;\n" +
+            "uniform sampler2D uYTexture;\n" +
+            "uniform sampler2D uUTexture;\n" +
+            "uniform sampler2D uVTexture;\n" +
+            "uniform int uRotation;\n" +
+            "varying vec2 vTexCoord;\n" +
+            "vec2 sourceCoord(vec2 p) {\n" +
+            "    if (uRotation == 90) {\n" +
+            "        return vec2(p.y, 1.0 - p.x);\n" +
+            "    }\n" +
+            "    if (uRotation == 180) {\n" +
+            "        return vec2(1.0 - p.x, 1.0 - p.y);\n" +
+            "    }\n" +
+            "    if (uRotation == 270) {\n" +
+            "        return vec2(1.0 - p.y, p.x);\n" +
+            "    }\n" +
+            "    return p;\n" +
+            "}\n" +
+            "void main() {\n" +
+            "    vec2 uv = sourceCoord(vTexCoord);\n" +
+            "    float y = texture2D(uYTexture, uv).r;\n" +
+            "    float u = texture2D(uUTexture, uv).r - 0.5;\n" +
+            "    float v = texture2D(uVTexture, uv).r - 0.5;\n" +
+            "    vec3 rgb;\n" +
+            "    rgb.r = y + 1.402 * v;\n" +
+            "    rgb.g = y - 0.344136 * u - 0.714136 * v;\n" +
+            "    rgb.b = y + 1.772 * u;\n" +
+            "    gl_FragColor = vec4(clamp(rgb, 0.0, 1.0), 1.0);\n" +
+            "}\n";
     private static final float[] FULLSCREEN_QUAD = {
             -1f, -1f, 0f, 0f,
              1f, -1f, 1f, 0f,
@@ -96,6 +131,7 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     private SurfaceTexture cameraSurfaceTexture;
     private Surface cameraSurface;
     private CameraSurfaceListener cameraSurfaceListener;
+    private StillImageAnalysisListener stillImageAnalysisListener;
     private int oesTextureId;
     private int imageTextureId;
     private int viewWidth;
@@ -106,6 +142,7 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     private volatile boolean imageMode;
     private volatile boolean videoFrameMode;
     private volatile boolean processedVideoFrameMode;
+    private volatile boolean processedYuvFrameMode;
     private volatile boolean gpuTextureProcessing = true;
     private volatile boolean released;
     private boolean surfaceReady;
@@ -118,7 +155,16 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     private ByteBuffer imageRgbaBuffer;
     private ByteBuffer pendingFrameUploadBuffer;
     private ByteBuffer spareFrameUploadBuffer;
+    private ByteBuffer pendingYuvYBuffer;
+    private ByteBuffer pendingYuvUBuffer;
+    private ByteBuffer pendingYuvVBuffer;
+    private ByteBuffer spareYuvYBuffer;
+    private ByteBuffer spareYuvUBuffer;
+    private ByteBuffer spareYuvVBuffer;
     private Bitmap pendingImageUploadBitmap;
+    private int yuvSourceWidth;
+    private int yuvSourceHeight;
+    private int yuvRotationDegrees;
     private volatile boolean synchronizedCameraMode;
     private final SyncCameraFrame[] syncCameraFrames = new SyncCameraFrame[SYNC_CAMERA_FRAME_POOL_SIZE];
     private int syncCameraFrameCursor;
@@ -128,6 +174,20 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     private int oesCopyProgram;
     private int textureCopyProgram;
     private int oesCopyFramebuffer;
+    private int yuvToRgbProgram;
+    private int yuvFramebuffer;
+    private int yuvRgbTextureId;
+    private int yuvYTextureId;
+    private int yuvUTextureId;
+    private int yuvVTextureId;
+    private int yuvRgbTextureWidth;
+    private int yuvRgbTextureHeight;
+    private int yuvYTextureWidth;
+    private int yuvYTextureHeight;
+    private int yuvUTextureWidth;
+    private int yuvUTextureHeight;
+    private int yuvVTextureWidth;
+    private int yuvVTextureHeight;
 
     public UyaliBeautyView(Context context) {
         this(context, null);
@@ -136,6 +196,14 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     public UyaliBeautyView(Context context, AttributeSet attrs) {
         super(context, attrs);
         textureProcessor = new UyaliBeautyTextureProcessor(context);
+        textureProcessor.setAnalysisCompleteListener(new UyaliBeautyTextureProcessor.AnalysisCompleteListener() {
+            @Override
+            public void onTextureAnalysisComplete(long timestampNanos) {
+                if (!released && !imageMode) {
+                    requestRender();
+                }
+            }
+        });
         engine = textureProcessor.engine();
         fullscreenQuadBuffer.put(FULLSCREEN_QUAD);
         fullscreenQuadBuffer.position(0);
@@ -158,6 +226,10 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         if (listener != null && cameraSurface != null) {
             listener.onCameraSurfaceCreated(cameraSurface, cameraSurfaceTexture);
         }
+    }
+
+    public void setStillImageAnalysisListener(StillImageAnalysisListener listener) {
+        stillImageAnalysisListener = listener;
     }
 
     public void setOutputMirrored(boolean mirrored) {
@@ -284,14 +356,159 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
     }
 
     public void setVideoRgbaFrame(ByteBuffer rgba, int width, int height, boolean mirrored) {
-        setRgbaFrame(rgba, width, height, mirrored, false);
+        setRgbaFrame(rgba, width, height, mirrored, false, true);
+    }
+
+    public ByteBuffer acquireVideoRgbaFrameBuffer(int requiredBytes) {
+        if (requiredBytes <= 0) {
+            return null;
+        }
+        synchronized (imageLock) {
+            ByteBuffer buffer = spareFrameUploadBuffer != null && spareFrameUploadBuffer.capacity() >= requiredBytes
+                    ? spareFrameUploadBuffer
+                    : ByteBuffer.allocateDirect(requiredBytes);
+            if (buffer == spareFrameUploadBuffer) {
+                spareFrameUploadBuffer = null;
+            }
+            buffer.clear();
+            buffer.limit(requiredBytes);
+            return buffer;
+        }
+    }
+
+    public void setVideoRgbaFrameOwned(ByteBuffer rgba, int width, int height, boolean mirrored) {
+        setRgbaFrame(rgba, width, height, mirrored, false, false);
     }
 
     public void setProcessedRgbaFrame(ByteBuffer rgba, int width, int height, boolean mirrored) {
-        setRgbaFrame(rgba, width, height, mirrored, true);
+        setRgbaFrame(rgba, width, height, mirrored, true, true);
     }
 
-    private void setRgbaFrame(ByteBuffer rgba, int width, int height, boolean mirrored, boolean processed) {
+    public void setProcessedYuv420Frame(Image image, int rotationDegrees, boolean mirrored) {
+        if (image == null || image.getWidth() <= 0 || image.getHeight() <= 0) {
+            return;
+        }
+        Image.Plane[] planes = image.getPlanes();
+        if (planes == null || planes.length < 3) {
+            return;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int chromaWidth = (width + 1) / 2;
+        int chromaHeight = (height + 1) / 2;
+        int yBytes = width * height;
+        int uvBytes = chromaWidth * chromaHeight;
+        int rotation = normalizeDegrees(rotationDegrees);
+        boolean rotated = rotation == 90 || rotation == 270;
+        int outputWidth = rotated ? height : width;
+        int outputHeight = rotated ? width : height;
+
+        final int generation;
+        synchronized (imageLock) {
+            ByteBuffer yUpload = takeBuffer(spareYuvYBuffer, yBytes);
+            spareYuvYBuffer = null;
+            ByteBuffer uUpload = takeBuffer(spareYuvUBuffer, uvBytes);
+            spareYuvUBuffer = null;
+            ByteBuffer vUpload = takeBuffer(spareYuvVBuffer, uvBytes);
+            spareYuvVBuffer = null;
+
+            if (!copyImagePlane(planes[0], width, height, yUpload) ||
+                    !copyImagePlane(planes[1], chromaWidth, chromaHeight, uUpload) ||
+                    !copyImagePlane(planes[2], chromaWidth, chromaHeight, vUpload)) {
+                spareYuvYBuffer = yUpload;
+                spareYuvUBuffer = uUpload;
+                spareYuvVBuffer = vUpload;
+                return;
+            }
+
+            imageMode = true;
+            videoFrameMode = true;
+            processedVideoFrameMode = true;
+            processedYuvFrameMode = true;
+            mirrorFrontCamera = mirrored;
+            imageWidth = outputWidth;
+            imageHeight = outputHeight;
+            yuvSourceWidth = width;
+            yuvSourceHeight = height;
+            yuvRotationDegrees = rotation;
+            imageRgbaBuffer = null;
+            pendingFrameUploadBuffer = null;
+            if (pendingYuvYBuffer != null) {
+                spareYuvYBuffer = pendingYuvYBuffer;
+            }
+            if (pendingYuvUBuffer != null) {
+                spareYuvUBuffer = pendingYuvUBuffer;
+            }
+            if (pendingYuvVBuffer != null) {
+                spareYuvVBuffer = pendingYuvVBuffer;
+            }
+            pendingYuvYBuffer = yUpload;
+            pendingYuvUBuffer = uUpload;
+            pendingYuvVBuffer = vUpload;
+            if (pendingImageUploadBitmap != null && !pendingImageUploadBitmap.isRecycled()) {
+                pendingImageUploadBitmap.recycle();
+            }
+            pendingImageUploadBitmap = null;
+            imageGeneration++;
+            generation = imageGeneration;
+        }
+        stopImageRefresh();
+        engine.setRenderLandmarkPredictionEnabled(false);
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                uploadPendingYuvFrame(generation);
+            }
+        });
+    }
+
+    private static ByteBuffer takeBuffer(ByteBuffer buffer, int requiredBytes) {
+        ByteBuffer output = buffer != null && buffer.capacity() >= requiredBytes
+                ? buffer
+                : ByteBuffer.allocateDirect(requiredBytes);
+        output.clear();
+        output.limit(requiredBytes);
+        return output;
+    }
+
+    private static boolean copyImagePlane(Image.Plane plane, int width, int height, ByteBuffer output) {
+        if (plane == null || width <= 0 || height <= 0 || output == null || output.capacity() < width * height) {
+            return false;
+        }
+        ByteBuffer input = plane.getBuffer();
+        if (input == null) {
+            return false;
+        }
+        ByteBuffer source = input.duplicate();
+        int rowStride = plane.getRowStride();
+        int pixelStride = plane.getPixelStride();
+        if (rowStride <= 0 || pixelStride <= 0) {
+            return false;
+        }
+        output.clear();
+        output.limit(width * height);
+        for (int row = 0; row < height; row++) {
+            int rowStart = row * rowStride;
+            int rowEnd = rowStart + (width - 1) * pixelStride + 1;
+            if (rowEnd > source.capacity()) {
+                return false;
+            }
+            if (pixelStride == 1) {
+                source.limit(source.capacity());
+                source.position(rowStart);
+                source.limit(rowStart + width);
+                output.put(source);
+            } else {
+                for (int col = 0; col < width; col++) {
+                    output.put(source.get(rowStart + col * pixelStride));
+                }
+            }
+        }
+        output.flip();
+        return true;
+    }
+
+    private void setRgbaFrame(ByteBuffer rgba, int width, int height, boolean mirrored, boolean processed, boolean copyFrame) {
         if (rgba == null || width <= 0 || height <= 0) {
             return;
         }
@@ -299,32 +516,52 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         if (requiredBytes <= 0 || rgba.capacity() < requiredBytes) {
             return;
         }
-        ByteBuffer source = rgba.duplicate();
-        source.position(0);
-        source.limit(requiredBytes);
+        ByteBuffer source = null;
+        if (copyFrame) {
+            source = rgba.duplicate();
+            source.position(0);
+            source.limit(requiredBytes);
+        } else {
+            rgba.position(0);
+            rgba.limit(requiredBytes);
+        }
 
         final int generation;
         synchronized (imageLock) {
-            ByteBuffer uploadBuffer = pendingFrameUploadBuffer;
-            if (uploadBuffer == null || uploadBuffer.capacity() < requiredBytes) {
+            ByteBuffer uploadBuffer = copyFrame ? pendingFrameUploadBuffer : rgba;
+            if (copyFrame && (uploadBuffer == null || uploadBuffer.capacity() < requiredBytes)) {
                 uploadBuffer = spareFrameUploadBuffer != null && spareFrameUploadBuffer.capacity() >= requiredBytes
                         ? spareFrameUploadBuffer
                         : ByteBuffer.allocateDirect(requiredBytes);
                 spareFrameUploadBuffer = null;
             }
-            uploadBuffer.clear();
-            uploadBuffer.limit(requiredBytes);
-            uploadBuffer.put(source);
-            uploadBuffer.flip();
+            if (copyFrame) {
+                uploadBuffer.clear();
+                uploadBuffer.limit(requiredBytes);
+                uploadBuffer.put(source);
+                uploadBuffer.flip();
+            }
+            if (!copyFrame && pendingFrameUploadBuffer != null && pendingFrameUploadBuffer != uploadBuffer) {
+                if (spareFrameUploadBuffer == null || spareFrameUploadBuffer.capacity() < pendingFrameUploadBuffer.capacity()) {
+                    spareFrameUploadBuffer = pendingFrameUploadBuffer;
+                }
+            }
 
             imageMode = true;
             videoFrameMode = true;
             processedVideoFrameMode = processed;
+            processedYuvFrameMode = false;
             mirrorFrontCamera = mirrored;
             imageWidth = width;
             imageHeight = height;
+            yuvSourceWidth = 0;
+            yuvSourceHeight = 0;
+            yuvRotationDegrees = 0;
             imageRgbaBuffer = null;
             pendingFrameUploadBuffer = uploadBuffer;
+            pendingYuvYBuffer = null;
+            pendingYuvUBuffer = null;
+            pendingYuvVBuffer = null;
             if (pendingImageUploadBitmap != null && !pendingImageUploadBitmap.isRecycled()) {
                 pendingImageUploadBitmap.recycle();
             }
@@ -347,11 +584,21 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
             imageMode = false;
             videoFrameMode = false;
             processedVideoFrameMode = false;
+            processedYuvFrameMode = false;
             imageWidth = 0;
             imageHeight = 0;
+            yuvSourceWidth = 0;
+            yuvSourceHeight = 0;
+            yuvRotationDegrees = 0;
             imageRgbaBuffer = null;
             pendingFrameUploadBuffer = null;
             spareFrameUploadBuffer = null;
+            pendingYuvYBuffer = null;
+            pendingYuvUBuffer = null;
+            pendingYuvVBuffer = null;
+            spareYuvYBuffer = null;
+            spareYuvUBuffer = null;
+            spareYuvVBuffer = null;
             if (pendingImageUploadBitmap != null && !pendingImageUploadBitmap.isRecycled()) {
                 pendingImageUploadBitmap.recycle();
             }
@@ -463,16 +710,16 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         if (!gpuTextureProcessing) {
             return;
         }
-        UyaliBeautyTextureFrame outputFrame = textureProcessor.process(
-                UyaliBeautyTextureInput.externalOes(oesTextureId,
-                        transform,
-                        viewWidth,
-                        viewHeight,
-                        sourceWidth,
-                        sourceHeight,
-                        mirrorFrontCamera,
-                        texture.getTimestamp(),
-                        updatedCameraTexture));
+        UyaliBeautyTextureInput input = UyaliBeautyTextureInput.externalOes(oesTextureId,
+                transform,
+                viewWidth,
+                viewHeight,
+                sourceWidth,
+                sourceHeight,
+                mirrorFrontCamera,
+                texture.getTimestamp(),
+                updatedCameraTexture);
+        UyaliBeautyTextureFrame outputFrame = textureProcessor.process(input);
         if (outputFrame != null && outputFrame.isValid()) {
             drawTexture2dToViewport(outputFrame.textureId(),
                     UyaliBeautyTextureInput.IDENTITY_TRANSFORM,
@@ -480,7 +727,7 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
                     viewHeight,
                     outputFrame.width(),
                     outputFrame.height(),
-                    false);
+                    true);
         }
     }
 
@@ -509,9 +756,17 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         synchronized (imageLock) {
             imageMode = false;
             videoFrameMode = false;
+            processedVideoFrameMode = false;
+            processedYuvFrameMode = false;
             imageRgbaBuffer = null;
             pendingFrameUploadBuffer = null;
             spareFrameUploadBuffer = null;
+            pendingYuvYBuffer = null;
+            pendingYuvUBuffer = null;
+            pendingYuvVBuffer = null;
+            spareYuvYBuffer = null;
+            spareYuvUBuffer = null;
+            spareYuvVBuffer = null;
             if (pendingImageUploadBitmap != null && !pendingImageUploadBitmap.isRecycled()) {
                 pendingImageUploadBitmap.recycle();
             }
@@ -538,7 +793,9 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
                     oesTextureId = 0;
                 }
                 deleteImageTexture();
+                deleteYuvResources();
                 deleteSyncCameraResources();
+                textureProcessor.setAnalysisCompleteListener(null);
                 textureProcessor.release();
             }
         });
@@ -546,10 +803,15 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
 
     private void renderImageFrame() {
         uploadPendingRgbaFrame(imageGeneration);
-        if (imageTextureId == 0) {
+        uploadPendingYuvFrame(imageGeneration);
+        boolean yuvMode;
+        synchronized (imageLock) {
+            yuvMode = processedYuvFrameMode;
+        }
+        if (!yuvMode && imageTextureId == 0) {
             uploadPendingImageTexture(imageGeneration);
         }
-        int textureId = imageTextureId;
+        int textureId = yuvMode ? yuvRgbTextureId : imageTextureId;
         int sourceWidth;
         int sourceHeight;
         synchronized (imageLock) {
@@ -557,6 +819,17 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
             sourceHeight = imageHeight;
         }
         if (textureId == 0 || sourceWidth <= 0 || sourceHeight <= 0) {
+            return;
+        }
+        if (yuvMode) {
+            engine.setRenderLandmarkPredictionEnabled(false);
+            engine.renderTexture2dFitCenter(textureId,
+                    BITMAP_TEXTURE_TRANSFORM,
+                    viewWidth,
+                    viewHeight,
+                    sourceWidth,
+                    sourceHeight,
+                    mirrorFrontCamera);
             return;
         }
         if (processedVideoFrameMode) {
@@ -571,6 +844,70 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         }
         engine.setRenderLandmarkPredictionEnabled(false);
         engine.renderTexture2dFitCenter(textureId, BITMAP_TEXTURE_TRANSFORM, viewWidth, viewHeight, sourceWidth, sourceHeight, mirrorFrontCamera);
+    }
+
+    private void uploadPendingYuvFrame(int generation) {
+        ByteBuffer yBuffer;
+        ByteBuffer uBuffer;
+        ByteBuffer vBuffer;
+        int sourceWidth;
+        int sourceHeight;
+        int outputWidth;
+        int outputHeight;
+        int rotation;
+        synchronized (imageLock) {
+            if (!surfaceReady || !imageMode || released || generation != imageGeneration ||
+                    !processedYuvFrameMode ||
+                    pendingYuvYBuffer == null || pendingYuvUBuffer == null || pendingYuvVBuffer == null) {
+                return;
+            }
+            yBuffer = pendingYuvYBuffer;
+            uBuffer = pendingYuvUBuffer;
+            vBuffer = pendingYuvVBuffer;
+            pendingYuvYBuffer = null;
+            pendingYuvUBuffer = null;
+            pendingYuvVBuffer = null;
+            sourceWidth = yuvSourceWidth;
+            sourceHeight = yuvSourceHeight;
+            outputWidth = imageWidth;
+            outputHeight = imageHeight;
+            rotation = yuvRotationDegrees;
+        }
+        int chromaWidth = (sourceWidth + 1) / 2;
+        int chromaHeight = (sourceHeight + 1) / 2;
+        if (sourceWidth <= 0 || sourceHeight <= 0 || outputWidth <= 0 || outputHeight <= 0 ||
+                !ensureYuvTextures() ||
+                !uploadYuvPlane(0, yBuffer, sourceWidth, sourceHeight) ||
+                !uploadYuvPlane(1, uBuffer, chromaWidth, chromaHeight) ||
+                !uploadYuvPlane(2, vBuffer, chromaWidth, chromaHeight) ||
+                !renderYuvToRgbTexture(outputWidth, outputHeight, rotation)) {
+            synchronized (imageLock) {
+                if (imageMode && !released && generation == imageGeneration && processedYuvFrameMode) {
+                    if (pendingYuvYBuffer == null) {
+                        pendingYuvYBuffer = yBuffer;
+                    }
+                    if (pendingYuvUBuffer == null) {
+                        pendingYuvUBuffer = uBuffer;
+                    }
+                    if (pendingYuvVBuffer == null) {
+                        pendingYuvVBuffer = vBuffer;
+                    }
+                }
+            }
+            return;
+        }
+        synchronized (imageLock) {
+            if (spareYuvYBuffer == null || spareYuvYBuffer.capacity() < yBuffer.capacity()) {
+                spareYuvYBuffer = yBuffer;
+            }
+            if (spareYuvUBuffer == null || spareYuvUBuffer.capacity() < uBuffer.capacity()) {
+                spareYuvUBuffer = uBuffer;
+            }
+            if (spareYuvVBuffer == null || spareYuvVBuffer.capacity() < vBuffer.capacity()) {
+                spareYuvVBuffer = vBuffer;
+            }
+        }
+        requestRender();
     }
 
     private void uploadPendingRgbaFrame(int generation) {
@@ -655,6 +992,20 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
                     }
                 }
                 requestRender();
+                final StillImageAnalysisListener listener = stillImageAnalysisListener;
+                if (listener != null) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            synchronized (imageLock) {
+                                if (!imageMode || released || generation != imageGeneration || imageRgbaBuffer != rgba) {
+                                    return;
+                                }
+                            }
+                            listener.onStillImageAnalysisComplete();
+                        }
+                    });
+                }
             }
         }, "UyaliBeautyImageAnalyze").start();
     }
@@ -790,6 +1141,177 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         return textureCopyProgram != 0;
     }
 
+    private boolean ensureYuvToRgbProgram() {
+        if (yuvToRgbProgram == 0) {
+            yuvToRgbProgram = linkProgram(OES_COPY_VERTEX_SHADER, YUV_TO_RGB_FRAGMENT_SHADER);
+        }
+        return yuvToRgbProgram != 0;
+    }
+
+    private boolean ensureYuvTextures() {
+        if (yuvYTextureId == 0) {
+            yuvYTextureId = createTexture2d();
+        }
+        if (yuvUTextureId == 0) {
+            yuvUTextureId = createTexture2d();
+        }
+        if (yuvVTextureId == 0) {
+            yuvVTextureId = createTexture2d();
+        }
+        return yuvYTextureId != 0 && yuvUTextureId != 0 && yuvVTextureId != 0;
+    }
+
+    private boolean uploadYuvPlane(int plane, ByteBuffer buffer, int width, int height) {
+        int textureId;
+        int currentWidth;
+        int currentHeight;
+        if (plane == 0) {
+            textureId = yuvYTextureId;
+            currentWidth = yuvYTextureWidth;
+            currentHeight = yuvYTextureHeight;
+        } else if (plane == 1) {
+            textureId = yuvUTextureId;
+            currentWidth = yuvUTextureWidth;
+            currentHeight = yuvUTextureHeight;
+        } else {
+            textureId = yuvVTextureId;
+            currentWidth = yuvVTextureWidth;
+            currentHeight = yuvVTextureHeight;
+        }
+        if (textureId == 0 || buffer == null || width <= 0 || height <= 0 || buffer.capacity() < width * height) {
+            return false;
+        }
+        buffer.position(0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+        GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+        if (currentWidth != width || currentHeight != height) {
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D,
+                    0,
+                    GLES20.GL_LUMINANCE,
+                    width,
+                    height,
+                    0,
+                    GLES20.GL_LUMINANCE,
+                    GLES20.GL_UNSIGNED_BYTE,
+                    buffer);
+            if (plane == 0) {
+                yuvYTextureWidth = width;
+                yuvYTextureHeight = height;
+            } else if (plane == 1) {
+                yuvUTextureWidth = width;
+                yuvUTextureHeight = height;
+            } else {
+                yuvVTextureWidth = width;
+                yuvVTextureHeight = height;
+            }
+        } else {
+            GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D,
+                    0,
+                    0,
+                    0,
+                    width,
+                    height,
+                    GLES20.GL_LUMINANCE,
+                    GLES20.GL_UNSIGNED_BYTE,
+                    buffer);
+        }
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        return true;
+    }
+
+    private boolean ensureYuvRgbTarget(int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return false;
+        }
+        if (yuvRgbTextureId == 0) {
+            yuvRgbTextureId = createTexture2d();
+        }
+        if (yuvFramebuffer == 0) {
+            int[] framebuffers = new int[1];
+            GLES20.glGenFramebuffers(1, framebuffers, 0);
+            yuvFramebuffer = framebuffers[0];
+        }
+        if (yuvRgbTextureId == 0 || yuvFramebuffer == 0) {
+            return false;
+        }
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, yuvRgbTextureId);
+        if (yuvRgbTextureWidth != width || yuvRgbTextureHeight != height) {
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D,
+                    0,
+                    GLES20.GL_RGBA,
+                    width,
+                    height,
+                    0,
+                    GLES20.GL_RGBA,
+                    GLES20.GL_UNSIGNED_BYTE,
+                    null);
+            yuvRgbTextureWidth = width;
+            yuvRgbTextureHeight = height;
+        }
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        return true;
+    }
+
+    private boolean renderYuvToRgbTexture(int width, int height, int rotationDegrees) {
+        if (!ensureYuvToRgbProgram() || !ensureYuvRgbTarget(width, height)) {
+            return false;
+        }
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, yuvFramebuffer);
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                GLES20.GL_COLOR_ATTACHMENT0,
+                GLES20.GL_TEXTURE_2D,
+                yuvRgbTextureId,
+                0);
+        if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES20.glViewport(0, 0, viewWidth, viewHeight);
+            return false;
+        }
+
+        GLES20.glViewport(0, 0, width, height);
+        GLES20.glUseProgram(yuvToRgbProgram);
+        int positionLocation = GLES20.glGetAttribLocation(yuvToRgbProgram, "aPosition");
+        int texCoordLocation = GLES20.glGetAttribLocation(yuvToRgbProgram, "aTexCoord");
+        int transformLocation = GLES20.glGetUniformLocation(yuvToRgbProgram, "uTransform");
+        int rotationLocation = GLES20.glGetUniformLocation(yuvToRgbProgram, "uRotation");
+        int yLocation = GLES20.glGetUniformLocation(yuvToRgbProgram, "uYTexture");
+        int uLocation = GLES20.glGetUniformLocation(yuvToRgbProgram, "uUTexture");
+        int vLocation = GLES20.glGetUniformLocation(yuvToRgbProgram, "uVTexture");
+
+        fullscreenQuadBuffer.position(0);
+        GLES20.glEnableVertexAttribArray(positionLocation);
+        GLES20.glVertexAttribPointer(positionLocation, 2, GLES20.GL_FLOAT, false, 16, fullscreenQuadBuffer);
+        fullscreenQuadBuffer.position(2);
+        GLES20.glEnableVertexAttribArray(texCoordLocation);
+        GLES20.glVertexAttribPointer(texCoordLocation, 2, GLES20.GL_FLOAT, false, 16, fullscreenQuadBuffer);
+        GLES20.glUniformMatrix4fv(transformLocation, 1, false, IDENTITY_TEXTURE_TRANSFORM, 0);
+        GLES20.glUniform1i(rotationLocation, normalizeDegrees(rotationDegrees));
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, yuvYTextureId);
+        GLES20.glUniform1i(yLocation, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, yuvUTextureId);
+        GLES20.glUniform1i(uLocation, 1);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, yuvVTextureId);
+        GLES20.glUniform1i(vLocation, 2);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+
+        GLES20.glDisableVertexAttribArray(positionLocation);
+        GLES20.glDisableVertexAttribArray(texCoordLocation);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES20.glUseProgram(0);
+        GLES20.glViewport(0, 0, viewWidth, viewHeight);
+        fullscreenQuadBuffer.position(0);
+        return true;
+    }
+
     private void drawTexture2dToViewport(int textureId,
                                          float[] textureTransform,
                                          int viewportWidth,
@@ -887,6 +1409,47 @@ public class UyaliBeautyView extends GLSurfaceView implements GLSurfaceView.Rend
         }
         syncCameraDisplayIndex = -1;
         pendingAnalyzedTimestampNs = Long.MIN_VALUE;
+    }
+
+    private void deleteYuvResources() {
+        int[] textures = new int[4];
+        int count = 0;
+        if (yuvRgbTextureId != 0) {
+            textures[count++] = yuvRgbTextureId;
+            yuvRgbTextureId = 0;
+        }
+        if (yuvYTextureId != 0) {
+            textures[count++] = yuvYTextureId;
+            yuvYTextureId = 0;
+        }
+        if (yuvUTextureId != 0) {
+            textures[count++] = yuvUTextureId;
+            yuvUTextureId = 0;
+        }
+        if (yuvVTextureId != 0) {
+            textures[count++] = yuvVTextureId;
+            yuvVTextureId = 0;
+        }
+        if (count > 0) {
+            GLES20.glDeleteTextures(count, textures, 0);
+        }
+        if (yuvFramebuffer != 0) {
+            int[] framebuffers = new int[]{yuvFramebuffer};
+            GLES20.glDeleteFramebuffers(1, framebuffers, 0);
+            yuvFramebuffer = 0;
+        }
+        if (yuvToRgbProgram != 0) {
+            GLES20.glDeleteProgram(yuvToRgbProgram);
+            yuvToRgbProgram = 0;
+        }
+        yuvRgbTextureWidth = 0;
+        yuvRgbTextureHeight = 0;
+        yuvYTextureWidth = 0;
+        yuvYTextureHeight = 0;
+        yuvUTextureWidth = 0;
+        yuvUTextureHeight = 0;
+        yuvVTextureWidth = 0;
+        yuvVTextureHeight = 0;
     }
 
     private static int compileShader(int type, String source) {

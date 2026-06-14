@@ -2,7 +2,7 @@
 
 [English](README.md) | **简体中文** | [日本語](README_JP.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
-UyaliBeautySDK 是一个用于实时相机帧和图片处理的移动端美颜 SDK，提供基础美颜、美型、美体和美妆效果。目前可用包支持 iOS 和 Android。
+UyaliBeautySDK 是一个用于实时相机帧和图片处理的移动端美颜 SDK，提供基础美颜、美型、美体和美妆效果。目前可用包支持 iOS、Android 和 HarmonyOS。
 
 如果这个项目对你有帮助，欢迎给一个 star 支持一下。
 
@@ -218,14 +218,14 @@ Android 相机推荐走 GPU 纹理处理。宿主 App 负责提供相机或视�
 ```java
 UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
 
-UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
-int outputTextureId = frame.textureId();
+beauty.process(oesTextureId);
+int outputTextureId = beauty.outputTextureId();
 ```
 
 如果你的渲染链路已经有 transform、输入尺寸、输出尺寸、时间戳和前后摄信息，可以显式传入：
 
 ```java
-UyaliBeautyTextureFrame frame = beauty.process(
+beauty.process(
         UyaliBeautyTextureInput.externalOes(
                 oesTextureId,
                 transform,
@@ -236,10 +236,16 @@ UyaliBeautyTextureFrame frame = beauty.process(
                 frontCamera,
                 timestampNs,
                 true));
-int outputTextureId = frame.textureId();
+int outputTextureId = beauty.outputTextureId();
 ```
 
-宿主 App 使用自己的 renderer 绘制 `outputTextureId`，或者送入编码 Surface。
+宿主 App 使用自己的 renderer 绘制 `outputTextureId`，或者送入编码 Surface。仅做预览时，也可以让 SDK 直接写入当前绑定的 framebuffer：
+
+```java
+beauty.processToCurrentFramebuffer(oesTextureId);
+```
+
+`processToCurrentFramebuffer(...)` 走同一套纹理帧处理链路，但不会产出 `outputTextureId`；需要后续预览、编码、推流或二次合成时继续使用 `process(...)`。
 
 ### 参数调整
 
@@ -283,11 +289,58 @@ ByteBuffer rgba = frame.rgba();
 - Android Gradle Plugin 8+
 - 支持 OpenGL ES 的渲染链路
 
+## HarmonyOS
+
+### 接入方式
+
+本地 HAR 包方式：
+
+```json5
+{
+  "dependencies": {
+    "uyali_beauty_sdk": "file:../../harmony_sdk/uyali_beauty_sdk.har"
+  }
+}
+```
+
+远程仓库方式：
+
+```json5
+{
+  "dependencies": {
+    "uyali_beauty_sdk": "1.0.0"
+  }
+}
+```
+
+在项目级 `build-profile.json5` 的 product build options 中开启 normalized OHM URL，然后执行 `ohpm install`。
+
+### 演示代码
+
+```ts
+import { UyaliBeautyEngine } from 'uyali_beauty_sdk';
+
+const beauty = new UyaliBeautyEngine(context);
+beauty.setParameter('white', 40);
+beauty.setParameter('skin', 35);
+beauty.setParameter('faceThin', 30);
+
+await beauty.processPixelMapInPlace(pixelMap);
+```
+
+本地 HAR 和远程仓库接入示例可参考 `harmony_sdk/README.md` 与 `harmony_demo/README.md`。
+
+### 环境要求
+
+- HarmonyOS 5.0+
+- DevEco Studio 或兼容 compileSdkVersion `6.0.2(22)` 的 HarmonyOS 命令行工具
+
 ## Demo 工程
 
 ```text
 iOS_demo/UyaliBeautySDKDemo
 android_demo
+harmony_demo
 ```
 
 Demo 包含美颜、美型、美体和美妆控制。

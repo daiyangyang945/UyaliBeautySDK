@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README_CN.md) | **日本語** | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
-UyaliBeautySDK は、リアルタイムのカメラフレームと画像処理に対応したモバイル ビューティー SDK です。美肌、フェイスリシェイプ、ボディリシェイプ、メイク効果を利用できます。現在利用できるパッケージは iOS と Android に対応しています。
+UyaliBeautySDK は、リアルタイムのカメラフレームと画像処理に対応したモバイル ビューティー SDK です。美肌、フェイスリシェイプ、ボディリシェイプ、メイク効果を利用できます。現在利用できるパッケージは iOS、Android、HarmonyOS に対応しています。
 
 このプロジェクトが役に立った場合は、star で応援していただけるとうれしいです。
 
@@ -218,14 +218,14 @@ Android のカメラ連携では GPU テクスチャ処理を推奨します。�
 ```java
 UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
 
-UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
-int outputTextureId = frame.textureId();
+beauty.process(oesTextureId);
+int outputTextureId = beauty.outputTextureId();
 ```
 
 renderer 側で transform、入力サイズ、出力サイズ、タイムスタンプ、カメラ向きを管理している場合は、明示的に渡せます。
 
 ```java
-UyaliBeautyTextureFrame frame = beauty.process(
+beauty.process(
         UyaliBeautyTextureInput.externalOes(
                 oesTextureId,
                 transform,
@@ -236,10 +236,16 @@ UyaliBeautyTextureFrame frame = beauty.process(
                 frontCamera,
                 timestampNs,
                 true));
-int outputTextureId = frame.textureId();
+int outputTextureId = beauty.outputTextureId();
 ```
 
-`outputTextureId` はホストアプリ自身の renderer で描画するか、encoder surface に送ります。
+`outputTextureId` はホストアプリ自身の renderer で描画するか、encoder surface に送ります。プレビュー専用の経路では、SDK が現在 bind されている framebuffer に直接描画することもできます。
+
+```java
+beauty.processToCurrentFramebuffer(oesTextureId);
+```
+
+`processToCurrentFramebuffer(...)` は同じテクスチャフレーム処理経路を使いますが、`outputTextureId` は生成しません。後段で表示、エンコード、配信、合成する必要がある場合は `process(...)` を使ってください。
 
 ### パラメータ調整
 
@@ -288,6 +294,7 @@ ByteBuffer rgba = frame.rgba();
 ```text
 iOS_demo/UyaliBeautySDKDemo
 android_demo
+harmony_demo
 ```
 
-demo には美肌、フェイスリシェイプ、ボディリシェイプ、メイクのコントロールが含まれています。
+demo には美肌、フェイスリシェイプ、ボディリシェイプ、メイクのコントロールが含まれています。HarmonyOS の導入手順は `harmony_sdk/README.md` と `harmony_demo/README.md` を参照してください。

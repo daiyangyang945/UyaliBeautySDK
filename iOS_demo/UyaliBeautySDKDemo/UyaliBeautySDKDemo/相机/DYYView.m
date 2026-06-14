@@ -299,10 +299,10 @@
     //创建shader
     *shader = glCreateShader(type);
     
-    //将顶点着色器源码附加到着色器对象上。
+    //将顶点着色器内容附加到着色器对象上。
         //参数1：shader,要编译的着色器对象 *shader
-        //参数2：numOfStrings,传递的源码字符串数量 1个
-        //参数3：strings,着色器程序的源码（真正的着色器程序源码）
+        //参数2：numOfStrings,传递的字符串数量 1个
+        //参数3：strings,着色器程序内容
         //参数4：lenOfStrings,长度，具有每个字符串长度的数组，或NULL，这意味着字符串是NULL终止的
     glShaderSource(*shader, 1, &source, NULL);
     

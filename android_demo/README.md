@@ -54,9 +54,17 @@ Call this on the GL thread after your camera or video source updates its texture
 ```java
 UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
 
-UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
-int outputTextureId = frame.textureId();
+beauty.process(oesTextureId);
+int outputTextureId = beauty.outputTextureId();
 ```
+
+For preview-only hosts, the SDK can draw directly into the framebuffer currently bound on the GL thread:
+
+```java
+beauty.processToCurrentFramebuffer(oesTextureId);
+```
+
+Use `process(...)` when the processed texture must be drawn later, encoded, streamed, or composed with other GL content. Use `processToCurrentFramebuffer(...)` only when direct preview output is enough.
 
 For a full Camera2, `SurfaceTexture` and renderer setup, see:
 

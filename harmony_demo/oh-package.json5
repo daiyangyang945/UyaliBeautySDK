@@ -1,0 +1,11 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "uyali-beauty-harmony",
+  "version": "1.0.0",
+  "description": "Uyali Beauty HarmonyOS SDK workspace.",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.19"
+  }
+}

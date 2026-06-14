@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | **Deutsch** | [한국어](README_KO.md)
 
-UyaliBeautySDK ist ein Mobile Beauty SDK für Echtzeit-Kameraframes und Bildverarbeitung. Es bietet Beauty-Filter, Face Reshape, Body Reshape und Make-up-Effekte. Das aktuell verfügbare Paket unterstützt iOS und Android.
+UyaliBeautySDK ist ein Mobile Beauty SDK für Echtzeit-Kameraframes und Bildverarbeitung. Es bietet Beauty-Filter, Face Reshape, Body Reshape und Make-up-Effekte. Das aktuell verfügbare Paket unterstützt iOS, Android und HarmonyOS.
 
 Wenn dir dieses Projekt hilft, freuen wir uns über einen star.
 
@@ -218,14 +218,14 @@ Minimaler Texture-Einstieg:
 ```java
 UyaliBeautyTextureProcessor beauty = new UyaliBeautyTextureProcessor(context);
 
-UyaliBeautyTextureFrame frame = beauty.process(oesTextureId);
-int outputTextureId = frame.textureId();
+beauty.process(oesTextureId);
+int outputTextureId = beauty.outputTextureId();
 ```
 
 Wenn dein Renderer Transform, Quellgröße, Ausgabegröße, Zeitstempel und Kamerarichtung bereits kennt, kannst du sie explizit übergeben:
 
 ```java
-UyaliBeautyTextureFrame frame = beauty.process(
+beauty.process(
         UyaliBeautyTextureInput.externalOes(
                 oesTextureId,
                 transform,
@@ -236,10 +236,16 @@ UyaliBeautyTextureFrame frame = beauty.process(
                 frontCamera,
                 timestampNs,
                 true));
-int outputTextureId = frame.textureId();
+int outputTextureId = beauty.outputTextureId();
 ```
 
-Zeichne `outputTextureId` mit deinem eigenen Renderer oder sende es an deine Encoder-Surface.
+Zeichne `outputTextureId` mit deinem eigenen Renderer oder sende es an deine Encoder-Surface. Für reine Preview-Pfade kann das SDK auch direkt in den aktuell gebundenen Framebuffer zeichnen:
+
+```java
+beauty.processToCurrentFramebuffer(oesTextureId);
+```
+
+`processToCurrentFramebuffer(...)` nutzt denselben Textur-Frame-Prozessor, erzeugt aber kein `outputTextureId`; verwende `process(...)`, wenn die verarbeitete Textur später angezeigt, encodiert, gestreamt oder weiter komponiert werden soll.
 
 ### Parametersteuerung
 
@@ -288,6 +294,7 @@ ByteBuffer rgba = frame.rgba();
 ```text
 iOS_demo/UyaliBeautySDKDemo
 android_demo
+harmony_demo
 ```
 
-Die Demos enthalten Controls für Beauty, Face Reshape, Body Reshape und Make-up.
+Die Demos enthalten Controls für Beauty, Face Reshape, Body Reshape und Make-up. Hinweise zur HarmonyOS-Integration befinden sich in `harmony_sdk/README.md` und `harmony_demo/README.md`.
