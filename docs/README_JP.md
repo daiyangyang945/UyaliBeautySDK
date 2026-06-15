@@ -1,6 +1,6 @@
 # UyaliBeautySDK：モバイル ビューティー SDK
 
-[English](README.md) | [简体中文](README_CN.md) | **日本語** | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
+[English](../README.md) | [简体中文](README_CN.md) | **日本語** | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
 UyaliBeautySDK は、リアルタイムのカメラフレームと画像処理に対応したモバイル ビューティー SDK です。美肌、フェイスリシェイプ、ボディリシェイプ、メイク効果を利用できます。現在利用できるパッケージは iOS、Android、HarmonyOS に対応しています。
 
@@ -62,17 +62,17 @@ UyaliBeautySDK は、顔ベースの美肌およびリシェイプ効果で複�
 
 | 顔やせ | あご | 目の距離 |
 | :--: | :--: | :--: |
-| ![face_thin](gif/face_thin.gif) | ![chin](gif/chin.gif) | ![eye_distance](gif/eye_distance.gif) |
+| ![face_thin](../gif/face_thin.gif) | ![chin](../gif/chin.gif) | ![eye_distance](../gif/eye_distance.gif) |
 
 | 鼻 | 眉間距離 |
 | :--: | :--: |
-| ![nose_thin](gif/nose_thin.gif) | ![eyebrow_distance](gif/eyebrow_distance.gif) |
+| ![nose_thin](../gif/nose_thin.gif) | ![eyebrow_distance](../gif/eyebrow_distance.gif) |
 
 ### メイク
 
 | 眉 | リップ |
 | :--: | :--: |
-| ![makeup_eyebrow](gif/makeup_eyebrow.gif) | ![makeup_rouge](gif/makeup_rouge.gif) |
+| ![makeup_eyebrow](../gif/makeup_eyebrow.gif) | ![makeup_rouge](../gif/makeup_rouge.gif) |
 
 ## iOS
 

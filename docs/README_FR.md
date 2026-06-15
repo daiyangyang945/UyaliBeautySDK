@@ -1,6 +1,6 @@
 # UyaliBeautySDK : SDK beauté mobile
 
-[English](README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | **Français** | [Deutsch](README_DE.md) | [한국어](README_KO.md)
+[English](../README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | **Français** | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
 UyaliBeautySDK est un SDK beauté mobile pour le traitement d'images et de flux caméra en temps réel. Il propose des filtres beauté, des effets de remodelage du visage, de remodelage du corps et de maquillage. Le package actuellement disponible prend en charge iOS, Android et HarmonyOS.
 
@@ -62,17 +62,17 @@ Les supports de démonstration proviennent d'internet. En cas de problème de dr
 
 | Visage affiné | Menton | Distance des yeux |
 | :--: | :--: | :--: |
-| ![face_thin](gif/face_thin.gif) | ![chin](gif/chin.gif) | ![eye_distance](gif/eye_distance.gif) |
+| ![face_thin](../gif/face_thin.gif) | ![chin](../gif/chin.gif) | ![eye_distance](../gif/eye_distance.gif) |
 
 | Nez | Distance des sourcils |
 | :--: | :--: |
-| ![nose_thin](gif/nose_thin.gif) | ![eyebrow_distance](gif/eyebrow_distance.gif) |
+| ![nose_thin](../gif/nose_thin.gif) | ![eyebrow_distance](../gif/eyebrow_distance.gif) |
 
 ### Maquillage
 
 | Sourcils | Rouge à lèvres |
 | :--: | :--: |
-| ![makeup_eyebrow](gif/makeup_eyebrow.gif) | ![makeup_rouge](gif/makeup_rouge.gif) |
+| ![makeup_eyebrow](../gif/makeup_eyebrow.gif) | ![makeup_rouge](../gif/makeup_rouge.gif) |
 
 ## iOS
 

@@ -1,6 +1,6 @@
 # UyaliBeautySDK: Mobile Beauty SDK
 
-[English](README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | **Deutsch** | [한국어](README_KO.md)
+[English](../README.md) | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | **Deutsch** | [한국어](README_KO.md)
 
 UyaliBeautySDK ist ein Mobile Beauty SDK für Echtzeit-Kameraframes und Bildverarbeitung. Es bietet Beauty-Filter, Face Reshape, Body Reshape und Make-up-Effekte. Das aktuell verfügbare Paket unterstützt iOS, Android und HarmonyOS.
 
@@ -62,17 +62,17 @@ Die Demo-Materialien stammen aus dem Internet. Bei Urheberrechtsfragen wenden Si
 
 | Schlankes Gesicht | Kinn | Augenabstand |
 | :--: | :--: | :--: |
-| ![face_thin](gif/face_thin.gif) | ![chin](gif/chin.gif) | ![eye_distance](gif/eye_distance.gif) |
+| ![face_thin](../gif/face_thin.gif) | ![chin](../gif/chin.gif) | ![eye_distance](../gif/eye_distance.gif) |
 
 | Nase | Brauenabstand |
 | :--: | :--: |
-| ![nose_thin](gif/nose_thin.gif) | ![eyebrow_distance](gif/eyebrow_distance.gif) |
+| ![nose_thin](../gif/nose_thin.gif) | ![eyebrow_distance](../gif/eyebrow_distance.gif) |
 
 ### Make-up
 
 | Augenbrauen | Lippenstift |
 | :--: | :--: |
-| ![makeup_eyebrow](gif/makeup_eyebrow.gif) | ![makeup_rouge](gif/makeup_rouge.gif) |
+| ![makeup_eyebrow](../gif/makeup_eyebrow.gif) | ![makeup_rouge](../gif/makeup_rouge.gif) |
 
 ## iOS
 

@@ -1,6 +1,6 @@
 # UyaliBeautySDK: Mobile Beauty SDK
 
-**English** | [简体中文](README_CN.md) | [日本語](README_JP.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
+**English** | [简体中文](docs/README_CN.md) | [日本語](docs/README_JP.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [한국어](docs/README_KO.md)
 
 UyaliBeautySDK is a mobile beauty SDK for real-time camera frames and image processing. It provides beauty filters, face reshape, body reshape and makeup effects. The current package supports iOS, Android and HarmonyOS.
 
