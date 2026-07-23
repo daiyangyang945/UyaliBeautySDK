@@ -298,3 +298,9 @@ harmony_demo
 ```
 
 Die Demos enthalten Controls für Beauty, Face Reshape, Body Reshape und Make-up. Hinweise zur HarmonyOS-Integration befinden sich in `harmony_sdk/README.md` und `harmony_demo/README.md`.
+
+## Lizenz
+
+`white` (Aufhellung) und `skin` (Hautglättung) dürfen ohne License-Datei kostenlos verwendet werden, auch in kommerziellen Apps. Andere Funktionen stehen nach dem Erstellen einer SDK-Engine 120 Sekunden lang zur Evaluierung bereit; der Produktionseinsatz erfordert eine kommerzielle License für die jeweiligen App-IDs, Plattformen, Module und den jeweiligen Zeitraum.
+
+Siehe [SDK License Agreement](../LICENSE.md), [Commercial License Guide](../COMMERCIAL_LICENSE.md) und [Third-Party Notices](../THIRD_PARTY_NOTICES.md). Eine `.uyali`-License-Datei darf niemals in ein öffentliches Repository eingecheckt werden.

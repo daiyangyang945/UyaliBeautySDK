@@ -298,3 +298,9 @@ harmony_demo
 ```
 
 demo には美肌、フェイスリシェイプ、ボディリシェイプ、メイクのコントロールが含まれています。HarmonyOS の導入手順は `harmony_sdk/README.md` と `harmony_demo/README.md` を参照してください。
+
+## ライセンス
+
+`white`（美白）と `skin`（スムージング）は、商用 App を含めて License ファイルなしで無料利用できます。その他の機能は SDK エンジン作成後 120 秒間の評価用途に限られ、本番利用には対象 App ID、プラットフォーム、モジュール、有効期間を含む商用 License が必要です。
+
+[SDK License Agreement](../LICENSE.md)、[Commercial License Guide](../COMMERCIAL_LICENSE.md)、[Third-Party Notices](../THIRD_PARTY_NOTICES.md) を確認してください。`.uyali` License ファイルを公開リポジトリへコミットしないでください。

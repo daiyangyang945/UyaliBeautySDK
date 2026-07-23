@@ -2,6 +2,11 @@
 
 This demo shows camera preview processing and image processing with `uyali_beauty_sdk`.
 
+Use of the SDK is governed by the repository
+[SDK License Agreement](../LICENSE.md) and
+[Commercial License Guide](../COMMERCIAL_LICENSE.md). Never publish a `.uyali`
+License file.
+
 ## Default Import
 
 The demo uses the local HAR package by default:

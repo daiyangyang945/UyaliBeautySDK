@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
     UyaliBeautySDK 是移动端美颜 SDK，支持相机预览和图片处理中的美颜、美型、美体和美妆效果。当前 CocoaPods 包支持 iOS。
   DESC
   s.homepage = 'https://github.com/daiyangyang945/UyaliBeautySDK'
-  s.license = { :type => 'Custom', :text => 'See the repository README for usage terms.' }
+  s.license = { :type => 'Custom', :file => 'LICENSE.md' }
   s.author = { 'UyaliBeauty' => 'UyaliBeauty' }
   s.platform = :ios, '12.0'
   s.swift_version = '5.0'

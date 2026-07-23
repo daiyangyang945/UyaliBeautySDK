@@ -23,3 +23,7 @@ harmony_demo/entry/build/
 harmony_demo/entry/oh_modules/
 harmony_demo/entry/oh-package-lock.json5
 harmony_demo/entry/src/main/resources/rawfile/uyali/licenses/
+
+# Customer and local-test License artifacts must never be committed.
+*.uyali
+*.lic

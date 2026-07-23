@@ -8,4 +8,13 @@
     <version>1.0.0</version>
     <packaging>aar</packaging>
     <name>UyaliBeauty Android SDK</name>
+    <description>Mobile beauty SDK for real-time camera and image beautification.</description>
+    <url>https://github.com/daiyangyang945/UyaliBeautySDK</url>
+    <licenses>
+        <license>
+            <name>UyaliBeautySDK Free and Evaluation License Agreement</name>
+            <url>https://github.com/daiyangyang945/UyaliBeautySDK/blob/main/LICENSE.md</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 </project>

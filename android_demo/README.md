@@ -1,5 +1,12 @@
 # UyaliBeauty Android Demo
 
+Use of the SDK is governed by the repository
+[SDK License Agreement](../LICENSE.md) and
+[Commercial License Guide](../COMMERCIAL_LICENSE.md). `white` and `skin` may be
+used free of charge in commercial Apps; other capabilities require a
+commercial License for production use after the 120-second evaluation period.
+Never publish a `.uyali` License file.
+
 This standalone demo consumes the Android SDK from the Maven package in this repository:
 
 ```text

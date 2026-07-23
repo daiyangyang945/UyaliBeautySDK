@@ -2,6 +2,13 @@
 
 This folder contains the HarmonyOS SDK HAR package and integration examples.
 
+The SDK is distributed under the repository
+[SDK License Agreement](../LICENSE.md). `white` and `skin` may be used free of
+charge in commercial Apps; other capabilities require a commercial License for
+production use after the 120-second evaluation period. See the
+[Commercial License Guide](../COMMERCIAL_LICENSE.md) and never publish a
+`.uyali` License file.
+
 ## Local HAR Import
 
 Place `uyali_beauty_sdk.har` in your project, then declare it from the module that uses the SDK:

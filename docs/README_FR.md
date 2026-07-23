@@ -298,3 +298,9 @@ harmony_demo
 ```
 
 Les démos incluent les contrôles beauté, remodelage du visage, remodelage du corps et maquillage. Les détails d'intégration HarmonyOS sont dans `harmony_sdk/README.md` et `harmony_demo/README.md`.
+
+## Licence
+
+`white` (éclaircissement) et `skin` (lissage) peuvent être utilisés gratuitement sans fichier License, y compris dans des Apps commerciales. Les autres fonctions sont disponibles pendant 120 secondes après la création de chaque moteur SDK, uniquement pour évaluation ; leur utilisation en production exige une License commerciale couvrant les identifiants d'App, plateformes, modules et durée concernés.
+
+Consultez le [SDK License Agreement](../LICENSE.md), le [Commercial License Guide](../COMMERCIAL_LICENSE.md) et les [Third-Party Notices](../THIRD_PARTY_NOTICES.md). Ne publiez jamais un fichier License `.uyali` dans un dépôt public.

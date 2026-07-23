@@ -344,3 +344,25 @@ harmony_demo
 ```
 
 The demos include beauty, face reshape, body reshape and makeup controls.
+
+## License
+
+UyaliBeautySDK uses a free-plus-commercial license model:
+
+| Mode | Available capabilities | Production and commercial use |
+|---|---|---|
+| Free | `white` (whitening) and `skin` (smoothing) | Free, including use in commercial Apps; no License file required |
+| Evaluation | Other capabilities for 120 seconds after each SDK engine instance is created | Development and purchase evaluation only |
+| Commercial | Modules and features expressly listed in a valid License file | Allowed only for the licensed App identifiers, platforms, modules, SDK versions, and term |
+
+The standard commercial modules are Beauty, Face Reshape, Body Reshape, and
+Makeup. Face-landmark output, body-pose output, debug output, and custom makeup
+assets are separate permissions unless a License expressly includes them.
+
+Read the [SDK License Agreement](LICENSE.md),
+[Commercial License Guide](COMMERCIAL_LICENSE.md), and
+[Third-Party Notices](THIRD_PARTY_NOTICES.md). Current commercial licensing and
+purchase information is available at
+[uyalibeauty.com](https://uyalibeauty.com).
+
+Never commit a `.uyali` License file to a public repository.

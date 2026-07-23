@@ -344,3 +344,19 @@ harmony_demo
 ```
 
 Demo 包含美颜、美型、美体和美妆控制。
+
+## 许可证与商业授权
+
+UyaliBeautySDK 采用“免费基础功能 + 高级功能商业授权”的模式：
+
+| 模式 | 可用能力 | 正式上线与商业使用 |
+|---|---|---|
+| 免费模式 | `white`（美白）、`skin`（磨皮） | 可以免费用于商业 App，无需 License 文件 |
+| 评估模式 | 每个 SDK 引擎实例创建后，其他能力可体验 120 秒 | 仅限开发测试和购买前评估 |
+| 商业模式 | 有效 License 文件明确列出的模块和功能 | 仅限授权的 App 标识、平台、模块、SDK 版本及有效期 |
+
+标准商业模块包括美颜、美型、美体和美妆。人脸关键点输出、人体关键点输出、调试输出和自定义美妆素材属于独立权限，除非 License 明确包含，否则不随标准模块自动授权。
+
+请阅读 [SDK 许可协议](../LICENSE.md)、[商业 License 说明](../COMMERCIAL_LICENSE.md)及[第三方声明](../THIRD_PARTY_NOTICES.md)。当前价格和购买入口见 [uyalibeauty.com](https://uyalibeauty.com)。
+
+请勿将 `.uyali` License 文件提交到任何公开仓库。

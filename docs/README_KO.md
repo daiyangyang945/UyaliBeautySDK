@@ -298,3 +298,9 @@ harmony_demo
 ```
 
 demo에는 뷰티, 얼굴 보정, 바디 보정, 메이크업 컨트롤이 포함되어 있습니다. HarmonyOS 통합 방법은 `harmony_sdk/README.md`와 `harmony_demo/README.md`를 참고하세요.
+
+## 라이선스
+
+`white`(미백)와 `skin`(피부 보정)은 License 파일 없이 상업용 App에서도 무료로 사용할 수 있습니다. 다른 기능은 SDK 엔진 인스턴스 생성 후 120초 동안 평가 목적으로만 사용할 수 있으며, 프로덕션 사용에는 해당 App 식별자, 플랫폼, 모듈과 기간이 명시된 상업용 License가 필요합니다.
+
+[SDK License Agreement](../LICENSE.md), [Commercial License Guide](../COMMERCIAL_LICENSE.md), [Third-Party Notices](../THIRD_PARTY_NOTICES.md)를 확인하세요. `.uyali` License 파일을 공개 저장소에 커밋하지 마세요.
