@@ -96,9 +96,10 @@ Do not:
 - modify, forge, resell, or attempt to generate it; or
 - publish decoded payloads, signatures, or internal validation details.
 
-If a License file is exposed, contact
-[support@uyalibeauty.com](mailto:support@uyalibeauty.com) with the License ID
-and order email. Do not send signing private keys or payment credentials.
+If a License file is exposed, visit
+[https://uyalibeauty.com](https://uyalibeauty.com) and use the current contact
+method shown on the website. Provide the License ID and order email, but do not
+send signing private keys or payment credentials.
 
 ## Purchase, upgrade, and support
 
@@ -185,8 +186,8 @@ License 文件是客户专属授权数据。请将其保存在私有仓库或受
 - 修改、伪造、转售或尝试自行生成；
 - 公开解码后的 payload、签名或内部校验细节。
 
-License 文件发生泄露时，请使用 License ID 和购买邮箱联系
-[support@uyalibeauty.com](mailto:support@uyalibeauty.com)。请勿发送签名私钥或支付凭据。
+License 文件发生泄露时，请访问
+[https://uyalibeauty.com](https://uyalibeauty.com)，通过网站当前提供的联系方式提交 License ID 和购买邮箱。请勿发送签名私钥或支付凭据。
 
 ## 购买、升级与支持
 

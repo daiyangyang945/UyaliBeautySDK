@@ -189,7 +189,6 @@ version delivered with the SDK version you obtained continues to govern that
 copy unless you accept a later version or a mandatory legal change applies.
 
 Questions and commercial authorization requests:
-[support@uyalibeauty.com](mailto:support@uyalibeauty.com) or
 [https://uyalibeauty.com](https://uyalibeauty.com).
 
 ---
@@ -300,7 +299,6 @@ SDK 材料的一切权利、所有权和利益归 UyaliBeauty 及其许可方所
 UyaliBeauty 可以为未来 SDK 版本发布修订协议。你取得某一 SDK 版本时随附的协议继续适用于该副本，除非你接受后续版本或法律强制要求立即变更。
 
 许可问题及商业授权申请：
-[support@uyalibeauty.com](mailto:support@uyalibeauty.com) 或
 [https://uyalibeauty.com](https://uyalibeauty.com)。
 
 中英文文本含义不一致时，以中文文本为准。
