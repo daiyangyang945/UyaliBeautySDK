@@ -674,9 +674,6 @@ SWIFT_CLASS("_TtC14UyaliBeautySDK17UyaliBeautyEngine")
 /// 本次会话剩余试用秒数。
 /// Remaining trial seconds for the current session.
 @property (nonatomic, readonly) NSTimeInterval licenseTrialSecondsRemaining;
-/// 当前渲染是否需要显示试用水印。
-/// Whether the current rendering should display a trial watermark.
-@property (nonatomic, readonly) BOOL licenseRequiresWatermark;
 /// 使用 License 字符串激活 SDK。
 /// Activates the SDK with a license string.
 - (UyaliBeautyLicenseResult * _Nonnull)activateLicense:(NSString * _Nonnull)licenseString SWIFT_WARN_UNUSED_RESULT;

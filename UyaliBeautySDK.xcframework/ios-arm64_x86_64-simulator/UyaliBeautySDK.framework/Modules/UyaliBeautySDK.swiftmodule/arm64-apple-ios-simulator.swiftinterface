@@ -26,9 +26,6 @@ import simd
   @objc public var licenseTrialSecondsRemaining: Foundation.TimeInterval {
     @objc get
   }
-  @objc public var licenseRequiresWatermark: Swift.Bool {
-    @objc get
-  }
   @objc public func activateLicense(_ licenseString: Swift.String) -> UyaliBeautySDK.UyaliBeautyLicenseResult
   @objc public func loadLicense(at fileURL: Foundation.URL) -> UyaliBeautySDK.UyaliBeautyLicenseResult
   @objc public func canUseFeature(_ feature: UyaliBeautySDK.UyaliBeautyFeature) -> Swift.Bool

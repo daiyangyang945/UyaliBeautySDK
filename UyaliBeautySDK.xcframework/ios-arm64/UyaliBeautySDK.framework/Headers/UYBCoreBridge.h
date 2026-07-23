@@ -201,6 +201,9 @@ typedef NS_ENUM(NSInteger, UYBMakeupIndexDataKind) {
 + (float)normalizeDarkCirclePercent:(float)value
     NS_SWIFT_NAME(normalizeDarkCirclePercent(_:));
 
++ (NSArray<NSNumber *> *)skinSmoothingTuningForNormalizedSkin:(float)normalizedSkin
+    NS_SWIFT_NAME(skinSmoothingTuning(normalizedSkin:));
+
 + (float)makeupStrengthForType:(NSInteger)type
                      intensity:(float)intensity
     NS_SWIFT_NAME(makeupStrength(type:intensity:));

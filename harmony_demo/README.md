@@ -44,3 +44,21 @@ hvigorw assembleHap
 - Camera beauty: `entry/src/main/ets/pages/CameraBeautyPage.ets`
 - Image beauty: `entry/src/main/ets/pages/ImageBeautyPage.ets`
 - Parameter catalog: `entry/src/main/ets/demo/BeautyCatalog.ets`
+
+## License Loading
+
+The HarmonyOS SDK uses the same Uyali license JSON format as iOS and Android. The demo can load it from app rawfile resources:
+
+```ts
+beauty.loadLicenseFromRawfile(context, 'uyali/license.lic');
+```
+
+It also supports direct text activation after fetching the license from your own service:
+
+```ts
+beauty.activateLicense(licenseText);
+```
+
+## Evaluation Limits
+
+The bundled public SDK keeps `white` and `skin` available without a time limit. Other beauty, reshape, body, makeup, and landmark-output capabilities are available for 120 seconds after each SDK engine instance is created.
